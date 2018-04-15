@@ -1,6 +1,9 @@
 VM.registerShortcut
 ---
 
+![NPM](https://img.shields.io/npm/v/vm.shortcut.svg)
+![License](https://img.shields.io/npm/l/vm.shortcut.svg)
+
 Register a shortcut for a function.
 
 This is a helper script for Violentmonkey.
