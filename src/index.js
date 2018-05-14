@@ -1,7 +1,7 @@
-let keys = null;
 const VM = window.VM || {};
 VM.registerShortcut = registerShortcut;
 export default VM;
+let keys = null;
 
 function normalizeKey(base, {
   c, s, a, m,
