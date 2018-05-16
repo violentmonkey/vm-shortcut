@@ -63,6 +63,18 @@ Array.from(rollupConfig)
   });
 });
 
+const testConfig = {
+  input: {
+    ...commonConfig.input,
+    input: 'test/index.js',
+  },
+  output: {
+    ...commonConfig.output,
+    format: 'cjs',
+    file: `${DIST}/test.js`,
+  },
+};
+
 function clean() {
   return del(DIST);
 }
@@ -71,10 +83,14 @@ function buildJs() {
   return Promise.all(rollupConfig.map(config => {
     return rollup.rollup(config.input)
     .then(bundle => bundle.write(config.output))
-    .catch(err => {
-      log(err.toString());
-    });
+    .catch(log);
   }));
+}
+
+function buildTest() {
+  return rollup.rollup(testConfig.input)
+  .then(bundle => bundle.write(testConfig.output))
+  .catch(log);
 }
 
 function watch() {
@@ -84,3 +100,4 @@ function watch() {
 exports.clean = clean;
 exports.build = buildJs;
 exports.dev = gulp.series(buildJs, watch);
+exports.test = buildTest;

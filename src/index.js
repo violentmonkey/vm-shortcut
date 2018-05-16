@@ -1,26 +1,15 @@
+import { modifiers, normalizeKey, normalizeShortcut } from './util';
+
 const VM = window.VM || {};
 VM.registerShortcut = registerShortcut;
 export default VM;
 let keys = null;
 
-function normalizeKey(base, {
-  c, s, a, m,
-}) {
-  return [
-    c && 'c',
-    s && 's',
-    a && 'a',
-    m && 'm',
-    base,
-  ].filter(Boolean).join('-');
-}
-
 function initializeShortcut() {
   keys = {};
   document.addEventListener('keydown', e => {
-    const base = String.fromCharCode(e.keyCode).toLowerCase();
-    if (!base) return;
-    const key = normalizeKey(base, {
+    if (modifiers[e.key.toLowerCase()]) return;
+    const key = normalizeKey(e.key, {
       c: e.ctrlKey,
       s: e.shiftKey,
       a: e.altKey,
@@ -31,15 +20,9 @@ function initializeShortcut() {
   }, true);
 }
 
-function registerShortcut(key, callback) {
+function registerShortcut(shortcut, callback) {
   if (!keys) initializeShortcut();
-  const parts = key.toLowerCase().split('-');
-  const base = parts.pop();
-  const modifiers = parts.reduce((map, c) => ({
-    ...map,
-    [c]: true,
-  }), {});
-  const normalizedKey = normalizeKey(base, modifiers);
+  const normalizedKey = normalizeShortcut(shortcut);
   let callbacks = keys[normalizedKey];
   if (!callbacks) {
     callbacks = [];
