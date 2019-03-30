@@ -1,6 +1,6 @@
 {
   "name": "vm.shortcut",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Register a shortcut for a function",
   "author": "Gerald <i@gerald.top>",
   "license": "ISC",
