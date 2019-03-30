@@ -1,5 +1,6 @@
 export const modifiers = {
   ctrl: 'c',
+  control: 'c', // mac OS
   shift: 's',
   alt: 'a',
   meta: 'm',

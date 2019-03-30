@@ -5,16 +5,22 @@ VM.registerShortcut = registerShortcut;
 export default VM;
 let keys = null;
 
+function log(...args) {
+  console.info('[VM.shortcut]', ...args);
+}
+
 function initializeShortcut() {
   keys = {};
   document.addEventListener('keydown', e => {
-    if (modifiers[e.key.toLowerCase()]) return;
-    const key = normalizeKey(e.key, {
+    const baseKey = e.key.toLowerCase();
+    if (modifiers[baseKey]) return;
+    const key = normalizeKey(baseKey, {
       c: e.ctrlKey,
       s: e.shiftKey,
       a: e.altKey,
       m: e.metaKey,
     });
+    if (VM.debug) log('keydown:', key);
     const callbacks = keys[key];
     if (callbacks) callbacks.forEach(callback => { callback(); });
   }, true);
@@ -23,6 +29,7 @@ function initializeShortcut() {
 function registerShortcut(shortcut, callback) {
   if (!keys) initializeShortcut();
   const normalizedKey = normalizeShortcut(shortcut);
+  if (VM.debug) log('register:', normalizedKey);
   let callbacks = keys[normalizedKey];
   if (!callbacks) {
     callbacks = [];
