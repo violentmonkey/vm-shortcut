@@ -1,52 +1,30 @@
-const path = require('path');
 const gulp = require('gulp');
 const log = require('fancy-log');
 const rollup = require('rollup');
 const del = require('del');
-const babel = require('rollup-plugin-babel');
-const replace = require('rollup-plugin-replace');
-const uglify = require('rollup-plugin-uglify');
-const pkg = require('./package.json');
+const { uglify } = require('rollup-plugin-uglify');
+const { getRollupPlugins, getExternal } = require('./scripts/util');
 
 const DIST = 'dist';
-const IS_PROD = process.env.NODE_ENV === 'production';
-const values = {
-  'process.env.VERSION': pkg.version,
-  'process.env.NODE_ENV': process.env.NODE_ENV || 'development',
-};
+const FILENAME = 'index';
 
-
-const commonConfig = {
-  input: {
-    plugins: [
-      // Note: rollup-plugin-babel does not support targeting latest versions
-      // See https://github.com/rollup/rollup-plugin-babel/issues/212
-      babel({
-        exclude: 'node_modules/**',
-        externalHelpers: true,
-      }),
-      replace({ values }),
-    ],
-  },
-};
+const external = getExternal();
 const rollupConfig = [
   {
     input: {
-      ...commonConfig.input,
       input: 'src/index.js',
+      plugins: getRollupPlugins({ browser: true }),
     },
     output: {
-      ...commonConfig.output,
       format: 'umd',
+      file: `${DIST}/${FILENAME}.js`,
       name: 'VM',
-      file: `${DIST}/index.js`,
     },
     minify: true,
   },
 ];
 // Generate minified versions
-Array.from(rollupConfig)
-.filter(({ minify }) => minify)
+rollupConfig.filter(({ minify }) => minify)
 .forEach(config => {
   rollupConfig.push({
     input: {
@@ -63,41 +41,32 @@ Array.from(rollupConfig)
   });
 });
 
-const testConfig = {
-  input: {
-    ...commonConfig.input,
-    input: 'test/index.js',
-  },
-  output: {
-    ...commonConfig.output,
-    format: 'cjs',
-    file: `${DIST}/test.js`,
-  },
-};
-
 function clean() {
-  return del(DIST);
+  return del([DIST]);
 }
 
 function buildJs() {
   return Promise.all(rollupConfig.map(config => {
     return rollup.rollup(config.input)
-    .then(bundle => bundle.write(config.output))
-    .catch(log);
+    .then(bundle => bundle.write(config.output));
   }));
 }
 
-function buildTest() {
-  return rollup.rollup(testConfig.input)
-  .then(bundle => bundle.write(testConfig.output))
-  .catch(log);
+function wrapError(handle) {
+  const wrapped = () => handle()
+  .catch(err => {
+    log(err.toString());
+  });
+  wrapped.displayName = handle.name;
+  return wrapped;
 }
 
 function watch() {
-  gulp.watch('src/**', buildJs);
+  gulp.watch('src/**', safeBuildJs);
 }
+
+const safeBuildJs = wrapError(buildJs);
 
 exports.clean = clean;
 exports.build = buildJs;
-exports.dev = gulp.series(buildJs, watch);
-exports.test = buildTest;
+exports.dev = gulp.series(safeBuildJs, watch);

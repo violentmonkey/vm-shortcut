@@ -12,9 +12,8 @@ function log(...args) {
 function initializeShortcut() {
   keys = {};
   document.addEventListener('keydown', e => {
-    const baseKey = e.key.toLowerCase();
-    if (modifiers[baseKey]) return;
-    const key = normalizeKey(baseKey, {
+    if (modifiers[e.key.toLowerCase()]) return;
+    const key = normalizeKey(e.key, {
       c: e.ctrlKey,
       s: e.shiftKey,
       a: e.altKey,

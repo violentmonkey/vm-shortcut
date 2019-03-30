@@ -14,7 +14,7 @@ export function normalizeKey(base, {
     s && 's',
     a && 'a',
     m && 'm',
-    base,
+    base.toLowerCase(),
   ].filter(Boolean).join('-');
 }
 
