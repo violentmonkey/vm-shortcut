@@ -14,7 +14,7 @@ This is a helper script for Violentmonkey.
 
    ```js
    // ...
-   // @require https://unpkg.com/vm.shortcut
+   // @require https://cdn.jsdelivr.net/npm/vm.shortcut@1
    // ...
 
    VM.registerShortcut('c-i', () => {
@@ -44,9 +44,11 @@ This is a helper script for Violentmonkey.
 
     - *shortcut*: string
 
-      Dash connected key combinations, modifiers first. Here are some good examples:
+      Dash connected key combinations, modifiers first, case insensitive. Here are some good examples:
 
       ```
+      # <modifiers>-<baseKey>
+
       # Ctrl + I
       c-i
       Ctrl-I
@@ -58,5 +60,7 @@ This is a helper script for Violentmonkey.
       ctrl-shift-a
       Shift-Ctrl-A
       ```
+
+      Base keys are read from [KeyboardEvenst.key](https://developer.mozilla.org/docs/Web/API/KeyboardEvent/key), see more details [here](https://www.w3.org/TR/uievents-key/).
 
     - *callback*: function

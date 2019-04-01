@@ -20,9 +20,10 @@
     "cov": "nyc --reporter=text --reporter=html npm test",
     "cov:open": "open coverage/index.html"
   },
-  "unpkg": "dist/index.min.js",
-  "repository": "git@github.com:violentmonkey/vm-shortcut.git",
   "main": "dist/index.js",
+  "unpkg": "dist/index.min.js",
+  "jsdelivr": "dist/index.min.js",
+  "repository": "git@github.com:violentmonkey/vm-shortcut.git",
   "files": [
     "dist"
   ],
