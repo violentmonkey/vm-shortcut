@@ -1,8 +1,8 @@
 VM.registerShortcut
 ---
 
-![NPM](https://img.shields.io/npm/v/vm.shortcut.svg)
-![License](https://img.shields.io/npm/l/vm.shortcut.svg)
+![NPM](https://img.shields.io/npm/v/@violentmonkey/shortcut.svg)
+![License](https://img.shields.io/npm/l/@violentmonkey/shortcut.svg)
 
 Register a shortcut for a function.
 
@@ -14,7 +14,7 @@ This is a helper script for Violentmonkey.
 
    ```js
    // ...
-   // @require https://cdn.jsdelivr.net/npm/vm.shortcut@1
+   // @require https://cdn.jsdelivr.net/npm/@violentmonkey/shortcut@1
    // ...
 
    VM.registerShortcut('c-i', () => {
@@ -25,11 +25,11 @@ This is a helper script for Violentmonkey.
 2. Use as a module:
 
    ```sh
-   $ yarn add vm.shortcut
+   $ yarn add @violentmonkey/shortcut
    ```
 
    ```js
-   import VM from 'vm.shortcut';
+   import VM from '@violentmonkey/shortcut';
 
    VM.registerShortcut('c-i', () => {
      console.log('You have pressed Ctrl-I');

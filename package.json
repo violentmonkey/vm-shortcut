@@ -1,5 +1,5 @@
 {
-  "name": "vm.shortcut",
+  "name": "@violentmonkey/shortcut",
   "version": "1.0.0",
   "description": "Register a shortcut for a function",
   "author": "Gerald <i@gerald.top>",
@@ -72,5 +72,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.4.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
