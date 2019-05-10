@@ -1,14 +1,13 @@
-VM.registerShortcut
----
+# VM.registerShortcut
 
-![NPM](https://img.shields.io/npm/v/@violentmonkey/shortcut.svg)
+[![NPM](https://img.shields.io/npm/v/@violentmonkey/shortcut.svg)](https://npm.im/@violentmonkey/shortcut)
 ![License](https://img.shields.io/npm/l/@violentmonkey/shortcut.svg)
 
 Register a shortcut for a function.
 
 This is a helper script for Violentmonkey.
 
-### Usage
+## Usage
 
 1. Use in a userscript:
 
@@ -36,7 +35,7 @@ This is a helper script for Violentmonkey.
    });
    ```
 
-### API
+## API
 
 - VM.registerShortcut(*shortcut*, *callback*)
 
