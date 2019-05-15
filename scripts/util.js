@@ -31,9 +31,6 @@ const rollupPluginMap = {
   commonjs: () => commonjs(),
 };
 
-exports.getRollupPlugins = getRollupPlugins;
-exports.getExternal = getExternal;
-
 function getRollupPlugins({ babelConfig, browser, aliases } = {}) {
   return [
     aliases && rollupPluginMap.alias(aliases),
@@ -47,3 +44,7 @@ function getRollupPlugins({ babelConfig, browser, aliases } = {}) {
 function getExternal(externals = []) {
   return id => id.startsWith('@babel/runtime/') || externals.includes(id);
 }
+
+exports.getRollupPlugins = getRollupPlugins;
+exports.getExternal = getExternal;
+exports.DIST = 'dist';

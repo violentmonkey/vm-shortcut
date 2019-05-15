@@ -1,8 +1,5 @@
 import { modifiers, normalizeKey, normalizeShortcut } from './util';
 
-const VM = window.VM || {};
-VM.registerShortcut = registerShortcut;
-export default VM;
 let keys = null;
 
 function log(...args) {
@@ -11,7 +8,7 @@ function log(...args) {
 
 function initializeShortcut() {
   keys = {};
-  document.addEventListener('keydown', e => {
+  document.addEventListener('keydown', (e) => {
     if (modifiers[e.key.toLowerCase()]) return;
     const key = normalizeKey(e.key, {
       c: e.ctrlKey,
@@ -21,11 +18,11 @@ function initializeShortcut() {
     });
     if (VM.debug) log('keydown:', key);
     const callbacks = keys[key];
-    if (callbacks) callbacks.forEach(callback => { callback(); });
+    if (callbacks) callbacks.forEach((callback) => { callback(); });
   }, true);
 }
 
-function registerShortcut(shortcut, callback) {
+export function registerShortcut(shortcut, callback) {
   if (!keys) initializeShortcut();
   const normalizedKey = normalizeShortcut(shortcut);
   if (VM.debug) log('register:', normalizedKey);

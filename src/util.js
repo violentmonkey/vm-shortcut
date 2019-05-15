@@ -22,8 +22,8 @@ export function normalizeShortcut(shortcut) {
   const parts = shortcut.toLowerCase().split('-');
   const base = parts.pop();
   const modifierState = parts.reduce((map, c) => {
-    c = modifiers[c] || c;
-    map[c] = true;
+    const key = modifiers[c] || c;
+    map[key] = true;
     return map;
   }, {});
   return normalizeKey(base, modifierState);

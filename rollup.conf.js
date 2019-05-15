@@ -1,12 +1,8 @@
-const gulp = require('gulp');
-const log = require('fancy-log');
 const rollup = require('rollup');
-const del = require('del');
 const { uglify } = require('rollup-plugin-uglify');
-const { getRollupPlugins, getExternal } = require('./scripts/util');
+const { getRollupPlugins, getExternal, DIST } = require('./scripts/util');
 const pkg = require('./package.json');
 
-const DIST = 'dist';
 const FILENAME = 'index';
 const BANNER = `/*! ${pkg.name} v${pkg.version} | ${pkg.license} License */`;
 
@@ -18,9 +14,11 @@ const rollupConfig = [
       plugins: getRollupPlugins({ browser: true }),
     },
     output: {
-      format: 'umd',
+      format: 'iife',
       file: `${DIST}/${FILENAME}.js`,
       name: 'VM',
+      extend: true,
+      esModule: false,
     },
     minify: true,
   },
@@ -49,37 +47,17 @@ rollupConfig.filter(({ minify }) => minify)
   });
 });
 
-function clean() {
-  return del([DIST]);
-}
+rollupConfig.forEach((item) => {
+  item.output = {
+    indent: false,
+    ...item.output,
+    ...BANNER && {
+      banner: BANNER,
+    },
+  };
+});
 
-function buildJs() {
-  return Promise.all(rollupConfig.map(async config => {
-    const bundle = await rollup.rollup(config.input);
-    await bundle.write({
-      ...config.output,
-      ...BANNER && {
-        banner: BANNER,
-      },
-    });
-  }));
-}
-
-function wrapError(handle) {
-  const wrapped = () => handle()
-  .catch(err => {
-    log(err.toString());
-  });
-  wrapped.displayName = handle.name;
-  return wrapped;
-}
-
-function watch() {
-  gulp.watch('src/**', safeBuildJs);
-}
-
-const safeBuildJs = wrapError(buildJs);
-
-exports.clean = clean;
-exports.build = buildJs;
-exports.dev = gulp.series(safeBuildJs, watch);
+module.exports = rollupConfig.map(({ input, output }) => ({
+  ...input,
+  output,
+}));

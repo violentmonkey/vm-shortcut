@@ -1,7 +1,7 @@
 import test from 'tape';
 import { normalizeKey, normalizeShortcut } from '#/util';
 
-test('normalizeKey', t => {
+test('normalizeKey', (t) => {
   t.equal(normalizeKey('a'), 'a');
   t.equal(normalizeKey('a', { c: true }), 'c-a');
   t.equal(normalizeKey('a', { c: true, s: true }), 'c-s-a');
@@ -10,7 +10,7 @@ test('normalizeKey', t => {
   t.end();
 });
 
-test('normalizeShortcut', t => {
+test('normalizeShortcut', (t) => {
   t.equal(normalizeShortcut('i'), 'i');
   t.equal(normalizeShortcut('c-i'), 'c-i');
   t.equal(normalizeShortcut('ctrl-i'), 'c-i');
