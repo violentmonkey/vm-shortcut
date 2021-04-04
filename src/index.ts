@@ -1,11 +1,6 @@
 import {
-  modifiers, normalizeKey, normalizeShortcut,
+  modifiers, normalizeKey, normalizeShortcut, IShortcut,
 } from './util';
-
-export interface IShortcut {
-  condition?: string;
-  callback: () => void;
-}
 
 export class KeyboardService {
   private _context: { [key: string]: any } = {};
@@ -39,11 +34,13 @@ export class KeyboardService {
     this._context[key] = value;
   }
 
-  matchCondition(condition: string): boolean {
-    // Only && is supported
-    return condition.split('&&')
-      .map(item => item.trim())
-      .every(item => this._context[item]);
+  matchCondition(item: IShortcut): boolean {
+    return !item.conditions || item.conditions
+      .every(cond => {
+        let value = this._context[cond.field];
+        if (cond.not) value = !value;
+        return value;
+      });
   }
 
   handleKey = (e: KeyboardEvent) => {
@@ -57,7 +54,7 @@ export class KeyboardService {
     const items = this._data[key];
     if (items) {
       for (const item of items) {
-        if (item.condition && this.matchCondition(item.condition)) {
+        if (this.matchCondition(item)) {
           e.preventDefault();
           item.callback();
           break;

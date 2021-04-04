@@ -13,6 +13,16 @@ export interface IModifiers {
   m?: boolean;
 }
 
+export interface ICondition {
+  field: string;
+  not: boolean;
+}
+
+export interface IShortcut {
+  conditions?: ICondition[];
+  callback: () => void;
+}
+
 export function normalizeKey(base: string, mod: IModifiers = {}) {
   const {
     c, s, a, m,
@@ -35,4 +45,17 @@ export function normalizeShortcut(shortcut: string) {
     return map;
   }, {});
   return normalizeKey(base, modifierState);
+}
+
+export function parseCondition(condition: string): ICondition[] {
+  return condition.split('&&')
+    .map(key => {
+      key = key.trim();
+      if (!key) return;
+      if (key[0] === '!') {
+        return { not: true, field: key.slice(1).trim() };
+      }
+      return { not: false, field: key };
+    })
+    .filter(Boolean);
 }
