@@ -1,4 +1,4 @@
-import { normalizeKey, normalizeShortcut } from '../src/util';
+import { normalizeKey, normalizeShortcut, parseCondition } from '../src/util';
 
 it('normalizeKey', () => {
   expect(normalizeKey('a')).toEqual('a');
@@ -16,4 +16,15 @@ it('normalizeShortcut', () => {
   expect(normalizeShortcut('shift-ctrl-i')).toEqual('c-s-i');
   expect(normalizeShortcut('F8')).toEqual('f8');
   expect(normalizeShortcut('ctrl-F8')).toEqual('c-f8');
+});
+
+it('parseCondition', () => {
+  expect(parseCondition('a && b')).toEqual([
+    { field: 'a', not: false },
+    { field: 'b', not: false },
+  ]);
+  expect(parseCondition('a && !b')).toEqual([
+    { field: 'a', not: false },
+    { field: 'b', not: true },
+  ]);
 });
