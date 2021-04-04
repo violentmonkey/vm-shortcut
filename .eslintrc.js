@@ -1,17 +1,12 @@
 module.exports = {
   root: true,
   extends: [
-    require.resolve('@gera2ld/plaid/eslint'),
+    require.resolve('@gera2ld/plaid-common-ts/eslint'),
   ],
-  settings: {
-    'import/resolver': {
-      'babel-module': {},
-    },
+  parserOptions: {
+    project: './tsconfig.json',
   },
   globals: {
     VM: true,
-  },
-  rules: {
-    'import/prefer-default-export': 'off',
   },
 };
