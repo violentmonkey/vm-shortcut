@@ -1,4 +1,8 @@
 export const modifiers = {
+  c: 'c',
+  s: 's',
+  a: 'a',
+  m: 'm',
   ctrl: 'c',
   control: 'c', // macOS
   shift: 's',
@@ -6,24 +10,24 @@ export const modifiers = {
   meta: 'm',
 };
 
-export interface IModifiers {
+export interface IShortcutModifiers {
   c?: boolean;
   s?: boolean;
   a?: boolean;
   m?: boolean;
 }
 
-export interface ICondition {
+export interface IShortcutCondition {
   field: string;
   not: boolean;
 }
 
 export interface IShortcut {
-  conditions?: ICondition[];
+  conditions?: IShortcutCondition[];
   callback: () => void;
 }
 
-export function normalizeKey(base: string, mod: IModifiers = {}) {
+export function reprKey(base: string, mod: IShortcutModifiers = {}) {
   const {
     c, s, a, m,
   } = mod;
@@ -32,22 +36,27 @@ export function normalizeKey(base: string, mod: IModifiers = {}) {
     c && 'c',
     s && 's',
     a && 'a',
-    base.toLowerCase(),
+    base,
   ].filter(Boolean).join('-');
 }
 
-export function normalizeShortcut(shortcut: string) {
-  const parts = shortcut.toLowerCase().split('-');
-  const base = parts.pop();
+export function normalizeKey(shortcut: string, caseSensitive = false) {
+  const parts = shortcut.split('-');
+  let base = parts.pop();
   const modifierState = parts.reduce((map, c) => {
-    const key = modifiers[c] || c;
-    map[key] = true;
+    const key = modifiers[c.toLowerCase()];
+    if (key) map[key] = true;
     return map;
   }, {});
-  return normalizeKey(base, modifierState);
+  if (!caseSensitive || base.length > 1) base = base.toLowerCase();
+  return reprKey(base, modifierState);
 }
 
-export function parseCondition(condition: string): ICondition[] {
+export function normalizeSequence(sequence: string, caseSensitive: boolean) {
+  return sequence.split(' ').map(key => normalizeKey(key, caseSensitive));
+}
+
+export function parseCondition(condition: string): IShortcutCondition[] {
   return condition.split('&&')
     .map(key => {
       key = key.trim();

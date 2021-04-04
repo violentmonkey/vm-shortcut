@@ -9,4 +9,7 @@ module.exports = {
   globals: {
     VM: true,
   },
+  rules: {
+    'max-classes-per-file': 'off',
+  },
 };

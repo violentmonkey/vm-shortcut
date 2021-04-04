@@ -16,21 +16,29 @@ This is a helper script for Violentmonkey.
    // @require https://cdn.jsdelivr.net/npm/@violentmonkey/shortcut@1
    // ...
 
-   VM.registerShortcut('c-i', () => {
+   VM.shortcut.register('c-i', () => {
      console.log('You have pressed Ctrl-I');
    });
    ```
 
 2. Use as a module:
 
-   ```sh
+   ```bash
    $ yarn add @violentmonkey/shortcut
    ```
 
    ```js
-   import VM from '@violentmonkey/shortcut';
+   import { register } from '@violentmonkey/shortcut';
 
-   VM.registerShortcut('c-i', () => {
+   register('c-i', () => {
      console.log('You have pressed Ctrl-I');
+   });
+   ```
+
+3. Key sequences:
+
+   ```js
+   register('c-a c-b', () => {
+     console.log('You just pressed Ctrl-A Ctrl-B sequence');
    });
    ```

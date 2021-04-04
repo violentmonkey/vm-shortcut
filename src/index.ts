@@ -1,11 +1,39 @@
 import {
-  modifiers, normalizeKey, normalizeShortcut, IShortcut,
+  modifiers, reprKey, normalizeSequence, IShortcut,
 } from './util';
+import { KeyNode } from './node';
+
+export * from './util';
 
 export class KeyboardService {
   private _context: { [key: string]: any } = {};
 
-  private _data: { [key: string]: IShortcut[] } = {};
+  private _rootCI = new KeyNode();
+
+  private _rootCS = new KeyNode();
+
+  private _curCI: KeyNode;
+
+  private _curCS: KeyNode;
+
+  private _timer: NodeJS.Timeout;
+
+  options = {
+    sequenceTimeout: 500,
+  };
+
+  private _reset = () => {
+    this._curCI = null;
+    this._curCS = null;
+    this._resetTimer();
+  };
+
+  private _resetTimer() {
+    if (this._timer) {
+      clearTimeout(this._timer);
+      this._timer = null;
+    }
+  }
 
   enable() {
     this.disable();
@@ -16,17 +44,12 @@ export class KeyboardService {
     document.removeEventListener('keydown', this.handleKey);
   }
 
-  register(key: string, item: IShortcut) {
-    const normalizedKey = normalizeShortcut(key);
-    let items = this._data[normalizedKey];
-    if (!items) {
-      items = [];
-      this._data[normalizedKey] = items;
-    }
-    items.push(item);
+  register(key: string, shortcut: IShortcut, caseSensitive = false) {
+    const sequence = normalizeSequence(key, caseSensitive);
+    const root = caseSensitive ? this._rootCS : this._rootCI;
+    root.add(sequence, shortcut);
     return () => {
-      const i = items.indexOf(item);
-      if (i >= 0) items.splice(i, 1);
+      root.remove(sequence, shortcut);
     };
   }
 
@@ -45,31 +68,54 @@ export class KeyboardService {
 
   handleKey = (e: KeyboardEvent) => {
     if (modifiers[e.key.toLowerCase()]) return;
-    const key = normalizeKey(e.key, {
+    this._resetTimer();
+    const keyCS = reprKey(e.key, {
+      c: e.ctrlKey,
+      a: e.altKey,
+      m: e.metaKey,
+    });
+    const keyCI = reprKey(e.key.toLowerCase(), {
       c: e.ctrlKey,
       s: e.shiftKey,
       a: e.altKey,
       m: e.metaKey,
     });
-    const items = this._data[key];
-    if (items) {
-      for (const item of items) {
-        if (this.matchCondition(item)) {
-          e.preventDefault();
-          item.callback();
-          break;
-        }
+    let curCS = this._curCS;
+    let curCI = this._curCI;
+    if (!curCS && !curCI) {
+      curCS = this._rootCS;
+      curCI = this._rootCI;
+    }
+    if (curCS) curCS = curCS.get([keyCS]);
+    if (curCI) curCI = curCI.get([keyCI]);
+    const shortcuts = [
+      ...curCI ? curCI.shortcuts : [],
+      ...curCS ? curCS.shortcuts : [],
+    ].reverse();
+    this._curCS = curCS;
+    this._curCI = curCI;
+    if (!shortcuts.length && !curCS?.children.size && !curCI?.children.size) {
+      this._reset();
+      return;
+    }
+    for (const shortcut of shortcuts) {
+      if (this.matchCondition(shortcut)) {
+        e.preventDefault();
+        this._reset();
+        shortcut.callback();
+        return;
       }
     }
+    this._timer = setTimeout(this._reset, this.options.sequenceTimeout);
   };
 }
 
 let service: KeyboardService;
 
-export function registerShortcut(key: string, callback: () => void) {
+export function register(key: string, shortcut: IShortcut, caseSensitive = false) {
   if (!service) {
     service = new KeyboardService();
   }
   service.enable();
-  service.register(key, { callback });
+  return service.register(key, shortcut, caseSensitive);
 }
