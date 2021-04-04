@@ -1,3 +1,5 @@
+const isMacintosh = navigator.userAgent.includes('Macintosh');
+
 export const modifiers = {
   c: 'c',
   s: 's',
@@ -8,6 +10,7 @@ export const modifiers = {
   shift: 's',
   alt: 'a',
   meta: 'm',
+  ctrlcmd: isMacintosh ? 'm' : 'c',
 };
 
 export interface IShortcutModifiers {
