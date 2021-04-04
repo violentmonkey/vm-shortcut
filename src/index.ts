@@ -119,3 +119,10 @@ export function register(key: string, shortcut: IShortcut, caseSensitive = false
   service.enable();
   return service.register(key, shortcut, caseSensitive);
 }
+
+if (process.env.VM && typeof VM !== 'undefined') {
+  VM.registerShortcut = (key: string, callback: () => void) => {
+    console.warn('[vm-shortcut] VM.registerShortcut is deprecated in favor of VM.shortcut.register, and will be removed in 2.x');
+    register(key, { callback });
+  };
+}

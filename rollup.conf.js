@@ -28,6 +28,9 @@ const rollupConfig = [
         esm: true,
         extensions: defaultOptions.extensions,
         postcss: postcssOptions,
+        replaceValues: {
+          'process.env.VM': false,
+        },
       }),
       external,
     },
@@ -45,6 +48,9 @@ const rollupConfig = [
         postcss: {
           ...postcssOptions,
           extract: 'style.css',
+        },
+        replaceValues: {
+          'process.env.VM': true,
         },
       }),
     },
