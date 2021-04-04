@@ -13,6 +13,16 @@ export const modifiers = {
   ctrlcmd: isMacintosh ? 'm' : 'c',
 };
 
+export const aliases = {
+  arrowup: 'up',
+  arrowdown: 'down',
+  arrowleft: 'left',
+  arrowright: 'right',
+  enter: 'cr',
+  escape: 'esc',
+  ' ': 'space',
+};
+
 export interface IShortcutModifiers {
   c?: boolean;
   s?: boolean;
@@ -34,6 +44,7 @@ export function reprKey(base: string, mod: IShortcutModifiers = {}) {
   const {
     c, s, a, m,
   } = mod;
+  base = aliases[base] || base;
   return [
     m && 'm',
     c && 'c',
