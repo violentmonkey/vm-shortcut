@@ -1,4 +1,4 @@
-# VM.registerShortcut
+# VM.shortcut
 
 [![NPM](https://img.shields.io/npm/v/@violentmonkey/shortcut.svg)](https://npm.im/@violentmonkey/shortcut)
 ![License](https://img.shields.io/npm/l/@violentmonkey/shortcut.svg)
