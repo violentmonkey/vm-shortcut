@@ -73,8 +73,8 @@ export class KeyboardService {
       c: e.ctrlKey,
       a: e.altKey,
       m: e.metaKey,
-    });
-    const keyCI = reprKey(e.key.toLowerCase(), {
+    }, true);
+    const keyCI = reprKey(e.key, {
       c: e.ctrlKey,
       s: e.shiftKey,
       a: e.altKey,

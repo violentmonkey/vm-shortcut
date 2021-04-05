@@ -1,11 +1,12 @@
 import { reprKey, normalizeKey, parseCondition } from '../src/util';
 
 it('reprKey', () => {
-  expect(reprKey('a')).toEqual('a');
+  expect(reprKey('a', {})).toEqual('a');
+  expect(reprKey('A', {}, true)).toEqual('A');
+  expect(reprKey('f8', {}, true)).toEqual('f8');
   expect(reprKey('a', { c: true })).toEqual('c-a');
+  expect(reprKey('A', { c: true }, true)).toEqual('c-A');
   expect(reprKey('a', { c: true, s: true })).toEqual('c-s-a');
-  expect(reprKey('A')).toEqual('A');
-  expect(reprKey('f8')).toEqual('f8');
 });
 
 it('normalizeKey', () => {

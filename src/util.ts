@@ -40,10 +40,11 @@ export interface IShortcut {
   callback: () => void;
 }
 
-export function reprKey(base: string, mod: IShortcutModifiers = {}) {
+export function reprKey(base: string, mod: IShortcutModifiers, caseSensitive = false) {
   const {
     c, s, a, m,
   } = mod;
+  if (!caseSensitive || base.length > 1) base = base.toLowerCase();
   base = aliases[base] || base;
   return [
     m && 'm',
@@ -56,15 +57,14 @@ export function reprKey(base: string, mod: IShortcutModifiers = {}) {
 
 export function normalizeKey(shortcut: string, caseSensitive = false) {
   const parts = shortcut.split('-');
-  let base = parts.pop();
+  const base = parts.pop();
   const modifierState = {};
   for (const part of parts) {
     const key = modifiers[part.toLowerCase()];
     if (!key) throw new Error(`Unknown modifier key: ${part}`);
     modifierState[key] = true;
   }
-  if (!caseSensitive || base.length > 1) base = base.toLowerCase();
-  return reprKey(base, modifierState);
+  return reprKey(base, modifierState, caseSensitive);
 }
 
 export function normalizeSequence(sequence: string, caseSensitive: boolean) {
