@@ -57,11 +57,12 @@ export function reprKey(base: string, mod: IShortcutModifiers = {}) {
 export function normalizeKey(shortcut: string, caseSensitive = false) {
   const parts = shortcut.split('-');
   let base = parts.pop();
-  const modifierState = parts.reduce((map, c) => {
-    const key = modifiers[c.toLowerCase()];
-    if (key) map[key] = true;
-    return map;
-  }, {});
+  const modifierState = {};
+  for (const part of parts) {
+    const key = modifiers[part.toLowerCase()];
+    if (!key) throw new Error(`Unknown modifier key: ${part}`);
+    modifierState[key] = true;
+  }
   if (!caseSensitive || base.length > 1) base = base.toLowerCase();
   return reprKey(base, modifierState);
 }
