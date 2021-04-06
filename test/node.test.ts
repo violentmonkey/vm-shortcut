@@ -11,7 +11,12 @@ function toJSON(node: KeyNode) {
 }
 
 function createShortcut() {
-  return { callback: () => {} };
+  return {
+    sequence: [],
+    callback: () => {},
+    enabled: true,
+    caseSensitive: true,
+  };
 }
 
 describe('KeyNode', () => {
