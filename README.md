@@ -38,6 +38,8 @@ This is a helper script for Violentmonkey.
 3. Key sequences:
 
    ```js
+   import { register } from '@violentmonkey/shortcut';
+
    register('c-a c-b', () => {
      console.log('You just pressed Ctrl-A Ctrl-B sequence');
    });

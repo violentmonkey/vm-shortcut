@@ -1,4 +1,4 @@
-import { IShortcut } from './util';
+import { IShortcut } from './types/shortcut';
 
 export class KeyNode {
   children = new Map<string, KeyNode>();

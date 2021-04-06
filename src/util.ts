@@ -1,3 +1,5 @@
+import { IShortcutModifiers, IShortcutCondition } from './types/shortcut';
+
 const isMacintosh = navigator.userAgent.includes('Macintosh');
 
 export const modifiers = {
@@ -22,23 +24,6 @@ export const aliases = {
   escape: 'esc',
   ' ': 'space',
 };
-
-export interface IShortcutModifiers {
-  c?: boolean;
-  s?: boolean;
-  a?: boolean;
-  m?: boolean;
-}
-
-export interface IShortcutCondition {
-  field: string;
-  not: boolean;
-}
-
-export interface IShortcut {
-  conditions?: IShortcutCondition[];
-  callback: () => void;
-}
 
 export function reprKey(base: string, mod: IShortcutModifiers, caseSensitive = false) {
   const {
