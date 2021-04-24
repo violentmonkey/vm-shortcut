@@ -17,7 +17,7 @@ This is a helper script for Violentmonkey.
    // ...
 
    VM.shortcut.register('c-i', () => {
-     console.log('You have pressed Ctrl-I');
+     console.log('You just pressed Ctrl-I');
    });
    ```
 
@@ -31,7 +31,7 @@ This is a helper script for Violentmonkey.
    import { register } from '@violentmonkey/shortcut';
 
    register('c-i', () => {
-     console.log('You have pressed Ctrl-I');
+     console.log('You just pressed Ctrl-I');
    });
    ```
 
@@ -44,3 +44,25 @@ This is a helper script for Violentmonkey.
      console.log('You just pressed Ctrl-A Ctrl-B sequence');
    });
    ```
+
+## Key definition
+
+A key sequence is a space-separated list of combined keys. Each combined key is composed of zero or more modifiers and exactly one base key in the end, concatenated with dashes (`-`). The modifiers are always case-insensitive and can be abbreviated as their first letters.
+
+Here are some valid examples:
+
+```
+ctrl-alt-c
+ctrl-a-c
+c-a-c
+```
+
+Possible modifiers are:
+
+- `c`, `ctrl`, `control`
+- `s`, `shift`
+- `a`, `alt`
+- `m`, `meta`
+- `ctrlcmd`
+
+There is one special case, `ctrlcmd` for `ctrl` on Windows and `cmd` for macOS, so if we register `ctrlcmd-s` to save something, the callback will be called when `ctrl-s` is pressed on Windows, and when `cmd-s` is pressed on macOS. This is useful to register cross-platform shortcuts.
