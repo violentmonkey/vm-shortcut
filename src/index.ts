@@ -182,7 +182,7 @@ export class KeyboardService {
   }
 
   handleKey = (e: KeyboardEvent) => {
-    if (modifiers[e.key.toLowerCase()]) return;
+    if (e.key.length > 1 && modifiers[e.key.toLowerCase()]) return;
     this._resetTimer();
     const keyCS = reprKey(e.key, {
       c: e.ctrlKey,
