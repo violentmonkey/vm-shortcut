@@ -1,4 +1,9 @@
-import { reprKey, normalizeKey, parseCondition } from '../src/util';
+import {
+  reprKey,
+  normalizeKey,
+  parseCondition,
+  reprShortcut,
+} from '../src/util';
 
 it('reprKey', () => {
   expect(reprKey('a', {})).toEqual('a');
@@ -29,4 +34,9 @@ it('parseCondition', () => {
     { field: 'a', not: false },
     { field: 'b', not: true },
   ]);
+});
+
+it('reprShortcut', () => {
+  expect(reprShortcut('c-s-a')).toEqual('^⇧A');
+  expect(reprShortcut('ctrlcmd-c')).toEqual('^C');
 });

@@ -15,6 +15,13 @@ export const modifiers = {
   ctrlcmd: isMacintosh ? 'm' : 'c',
 };
 
+export const modifierSymbols = {
+  c: '^',
+  s: '⇧',
+  a: '⌥',
+  m: '⌘',
+};
+
 export const aliases = {
   arrowup: 'up',
   arrowdown: 'down',
@@ -66,4 +73,12 @@ export function parseCondition(condition: string): IShortcutCondition[] {
       return { not: false, field: key };
     })
     .filter(Boolean);
+}
+
+export function reprShortcut(shortcut: string, caseSensitive = false) {
+  const parts = normalizeKey(shortcut, caseSensitive).split('-');
+  let base = parts.pop();
+  base = base[0].toUpperCase() + base.slice(1);
+  const modifiers = parts.map((p) => modifierSymbols[p]).filter(Boolean);
+  return [...modifiers, base].join('');
 }
