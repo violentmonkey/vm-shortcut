@@ -1,6 +1,7 @@
 module.exports = {
   root: true,
   extends: [
+    require.resolve('@gera2ld/plaid/eslint'),
     require.resolve('@gera2ld/plaid-common-ts/eslint'),
   ],
   parserOptions: {
@@ -10,6 +11,6 @@ module.exports = {
     VM: true,
   },
   rules: {
-    'max-classes-per-file': 'off',
+    '@typescript-eslint/no-this-alias': 'off',
   },
 };

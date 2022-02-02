@@ -4,12 +4,7 @@ import {
   IShortcutConditionCache,
   IShortcutOptions,
 } from './types/shortcut';
-import {
-  modifiers,
-  normalizeSequence,
-  parseCondition,
-  reprKey,
-} from './util';
+import { modifiers, normalizeSequence, parseCondition, reprKey } from './util';
 import { KeyNode } from './node';
 
 export * from './util';
@@ -76,7 +71,7 @@ export class KeyboardService {
   }
 
   private _evalCondition(conditions: IShortcutCondition[]) {
-    return conditions.every(cond => {
+    return conditions.every((cond) => {
       let value = this._context[cond.field];
       if (cond.not) value = !value;
       return value;
@@ -110,7 +105,11 @@ export class KeyboardService {
     document.removeEventListener('keydown', this.handleKey);
   }
 
-  register(key: string, callback: () => void, options?: Partial<IShortcutOptions>) {
+  register(
+    key: string,
+    callback: () => void,
+    options?: Partial<IShortcutOptions>
+  ) {
     const { caseSensitive, condition }: IShortcutOptions = {
       caseSensitive: false,
       ...options,
@@ -153,7 +152,7 @@ export class KeyboardService {
   handleKeyOnce(keyCS: string, keyCI: string, fromRoot: boolean) {
     let curCS = this._curCS;
     let curCI = this._curCI;
-    if (fromRoot || !curCS && !curCI) {
+    if (fromRoot || (!curCS && !curCI)) {
       // set fromRoot to true to avoid another retry
       fromRoot = true;
       curCS = this._rootCS;
@@ -162,12 +161,17 @@ export class KeyboardService {
     if (curCS) curCS = curCS.get([keyCS]);
     if (curCI) curCI = curCI.get([keyCI]);
     const shortcuts = [
-      ...curCI ? curCI.shortcuts : [],
-      ...curCS ? curCS.shortcuts : [],
+      ...(curCI ? curCI.shortcuts : []),
+      ...(curCS ? curCS.shortcuts : []),
     ].reverse();
     this._curCS = curCS;
     this._curCI = curCI;
-    if (!fromRoot && !shortcuts.length && !curCS?.children.size && !curCI?.children.size) {
+    if (
+      !fromRoot &&
+      !shortcuts.length &&
+      !curCS?.children.size &&
+      !curCI?.children.size
+    ) {
       // Nothing is matched with the last key, rematch from root
       return this.handleKeyOnce(keyCS, keyCI, true);
     }
@@ -184,11 +188,15 @@ export class KeyboardService {
   handleKey = (e: KeyboardEvent) => {
     if (e.key.length > 1 && modifiers[e.key.toLowerCase()]) return;
     this._resetTimer();
-    const keyCS = reprKey(e.key, {
-      c: e.ctrlKey,
-      a: e.altKey,
-      m: e.metaKey,
-    }, true);
+    const keyCS = reprKey(
+      e.key,
+      {
+        c: e.ctrlKey,
+        a: e.altKey,
+        m: e.metaKey,
+      },
+      true
+    );
     const keyCI = reprKey(e.key, {
       c: e.ctrlKey,
       s: e.shiftKey,
@@ -205,7 +213,11 @@ export class KeyboardService {
 
 let service: KeyboardService;
 
-export function register(key: string, callback: () => void, options?: Partial<IShortcutOptions>) {
+export function register(
+  key: string,
+  callback: () => void,
+  options?: Partial<IShortcutOptions>
+) {
   if (!service) {
     service = new KeyboardService();
   }
@@ -215,7 +227,9 @@ export function register(key: string, callback: () => void, options?: Partial<IS
 
 if (process.env.VM && typeof VM !== 'undefined') {
   VM.registerShortcut = (key: string, callback: () => void) => {
-    console.warn('[vm-shortcut] VM.registerShortcut is deprecated in favor of VM.shortcut.register, and will be removed in 2.x');
+    console.warn(
+      '[vm-shortcut] VM.registerShortcut is deprecated in favor of VM.shortcut.register, and will be removed in 2.x'
+    );
     register(key, callback);
   };
 }

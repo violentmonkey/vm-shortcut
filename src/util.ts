@@ -25,19 +25,17 @@ export const aliases = {
   ' ': 'space',
 };
 
-export function reprKey(base: string, mod: IShortcutModifiers, caseSensitive = false) {
-  const {
-    c, s, a, m,
-  } = mod;
+export function reprKey(
+  base: string,
+  mod: IShortcutModifiers,
+  caseSensitive = false
+) {
+  const { c, s, a, m } = mod;
   if (!caseSensitive || base.length > 1) base = base.toLowerCase();
   base = aliases[base] || base;
-  return [
-    m && 'm',
-    c && 'c',
-    s && 's',
-    a && 'a',
-    base,
-  ].filter(Boolean).join('-');
+  return [m && 'm', c && 'c', s && 's', a && 'a', base]
+    .filter(Boolean)
+    .join('-');
 }
 
 export function normalizeKey(shortcut: string, caseSensitive = false) {
@@ -53,12 +51,13 @@ export function normalizeKey(shortcut: string, caseSensitive = false) {
 }
 
 export function normalizeSequence(sequence: string, caseSensitive: boolean) {
-  return sequence.split(' ').map(key => normalizeKey(key, caseSensitive));
+  return sequence.split(' ').map((key) => normalizeKey(key, caseSensitive));
 }
 
 export function parseCondition(condition: string): IShortcutCondition[] {
-  return condition.split('&&')
-    .map(key => {
+  return condition
+    .split('&&')
+    .map((key) => {
       key = key.trim();
       if (!key) return;
       if (key[0] === '!') {

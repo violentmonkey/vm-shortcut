@@ -26,6 +26,7 @@ const rollupConfig = [
       input: 'src/index.ts',
       plugins: getRollupPlugins({
         esm: true,
+        minimize: false,
         extensions: defaultOptions.extensions,
         postcss: postcssOptions,
         replaceValues: {
@@ -44,6 +45,7 @@ const rollupConfig = [
       input: 'src/index.ts',
       plugins: getRollupPlugins({
         esm: true,
+        minimize: false,
         extensions: defaultOptions.extensions,
         postcss: {
           ...postcssOptions,
