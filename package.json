@@ -1,6 +1,6 @@
 {
   "name": "@violentmonkey/shortcut",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Register a shortcut for a function",
   "author": "Gerald <gera2ld@live.com>",
   "license": "ISC",
