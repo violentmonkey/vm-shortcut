@@ -214,17 +214,20 @@ export class KeyboardService {
 
 let service: KeyboardService;
 
-export function register(
-  key: string,
-  callback: () => void,
-  options?: Partial<IShortcutOptions>
-) {
+function getService() {
   if (!service) {
     service = new KeyboardService();
+    service.enable();
   }
-  service.enable();
-  return service.register(key, callback, options);
+  return service;
 }
+
+export const register = (...args: Parameters<KeyboardService['register']>) =>
+  getService().register(...args);
+export const enable = () => getService().enable();
+export const disable = () => getService().disable();
+export const handleKey = (...args: Parameters<KeyboardService['handleKey']>) =>
+  getService().handleKey(...args);
 
 if (process.env.VM && typeof VM !== 'undefined') {
   VM.registerShortcut = (key: string, callback: () => void) => {
