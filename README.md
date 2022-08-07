@@ -85,11 +85,31 @@ The usage above is with the default keyboard service. However you can use the `K
 import { KeyboardService } from '@violentmonkey/shortcut';
 
 const service = new KeyboardService();
+// Or pass options
+const service = new KeyboardService({
+  sequenceTimeout: 500,
+});
+
 service.enable();
 
 service.register('c-i', () => {
   console.log('You just pressed Ctrl-I');
 });
+
+// Only register the following key when `inputFocus` is false
+service.register('g g', () => {
+  console.log('Now inputFocus is false and you pressed `g g`');
+}, {
+  condition: '!inputFocus',
+});
+
+// Handle inputFocus using capture mode
+document.addEventListener('focus', (e) => {
+  if (isInput(e.target)) service.setContext('inputFocus', true);
+}, true);
+document.addEventListener('blur', (e) => {
+  if (isInput(e.target)) service.setContext('inputFocus', false);
+}, true);
    
 // Disable the shortcuts and unbind all events whereever you want
 service.disable();
@@ -98,7 +118,7 @@ service.disable();
 service.enable();
 ```
 
-## Key definition
+## Key Definition
 
 A key sequence is a space-separated list of combined keys. Each combined key is composed of zero or more modifiers and exactly one base key in the end, concatenated with dashes (`-`). The modifiers are always case-insensitive and can be abbreviated as their first letters.
 
@@ -115,7 +135,7 @@ Possible modifiers are:
 - `c`, `ctrl`, `control`
 - `s`, `shift`
 - `a`, `alt`
-- `m`, `meta`
+- `m`, `meta`, `cmd`
 - `ctrlcmd`
 
 There is one special case, `ctrlcmd` for `ctrl` on Windows and `cmd` for macOS, so if we register `ctrlcmd-s` to save something, the callback will be called when `ctrl-s` is pressed on Windows, and when `cmd-s` is pressed on macOS. This is useful to register cross-platform shortcuts.
