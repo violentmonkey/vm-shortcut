@@ -8,7 +8,7 @@
     "prepare": "husky install",
     "dev": "rollup -wc rollup.conf.js",
     "prepublishOnly": "run-s build",
-    "lint": "eslint --ext .ts,.tsx src",
+    "lint": "eslint --ext .ts,.tsx src test",
     "test": "jest",
     "ci": "run-s lint test",
     "clean": "del-cli dist types",

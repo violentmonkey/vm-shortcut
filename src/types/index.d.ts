@@ -1,4 +1,6 @@
-declare const VM: any;
+declare const VM: {
+  registerShortcut: (key: string, callback: () => void) => void;
+};
 
 declare module '*.module.css' {
   /**

@@ -12,6 +12,7 @@ export const modifiers = {
   shift: 's',
   alt: 'a',
   meta: 'm',
+  cmd: 'm',
   ctrlcmd: isMacintosh ? 'm' : 'c',
 };
 

@@ -3,17 +3,16 @@ import { KeyNode } from '../src/node';
 function toJSON(node: KeyNode) {
   return [
     node.shortcuts.size,
-    Array.from(
-      node.children.entries(),
-      ([key, child]) => [key, toJSON(child)],
-    ),
+    Array.from(node.children.entries(), ([key, child]) => [key, toJSON(child)]),
   ];
 }
 
 function createShortcut() {
   return {
     sequence: [],
-    callback: () => {},
+    callback: () => {
+      /* dummy */
+    },
     enabled: true,
     caseSensitive: true,
   };
@@ -34,28 +33,8 @@ describe('KeyNode', () => {
           [
             1,
             [
-              [
-                'b',
-                [
-                  1,
-                  [],
-                ],
-              ],
-              [
-                'c',
-                [
-                  0,
-                  [
-                    [
-                      'd',
-                      [
-                        2,
-                        [],
-                      ],
-                    ],
-                  ],
-                ],
-              ],
+              ['b', [1, []]],
+              ['c', [0, [['d', [2, []]]]]],
             ],
           ],
         ],
@@ -69,25 +48,6 @@ describe('KeyNode', () => {
     tree.add(['a', 'b'], createShortcut());
     tree.add(['a', 'c', 'd'], createShortcut());
     tree.remove(['a', 'c', 'd']);
-    expect(toJSON(tree)).toEqual([
-      0,
-      [
-        [
-          'a',
-          [
-            1,
-            [
-              [
-                'b',
-                [
-                  1,
-                  [],
-                ],
-              ],
-            ],
-          ],
-        ],
-      ],
-    ]);
+    expect(toJSON(tree)).toEqual([0, [['a', [1, [['b', [1, []]]]]]]]);
   });
 });

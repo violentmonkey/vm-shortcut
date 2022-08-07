@@ -28,3 +28,8 @@ export interface IShortcutOptions {
   condition?: string;
   caseSensitive: boolean;
 }
+
+export interface IShortcutServiceOptions {
+  /** Max timeout between two keys within a sequence. */
+  sequenceTimeout: number;
+}

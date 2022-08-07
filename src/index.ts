@@ -3,6 +3,7 @@ import {
   IShortcutCondition,
   IShortcutConditionCache,
   IShortcutOptions,
+  IShortcutServiceOptions,
 } from './types/shortcut';
 import { modifiers, normalizeSequence, parseCondition, reprKey } from './util';
 import { KeyNode } from './node';
@@ -11,7 +12,7 @@ export * from './util';
 export * from './types/shortcut';
 
 export class KeyboardService {
-  private _context: { [key: string]: any } = {};
+  private _context: Record<string, unknown> = {};
 
   private _conditionData: { [key: string]: IShortcutConditionCache } = {};
 
@@ -29,9 +30,18 @@ export class KeyboardService {
 
   private _timer: NodeJS.Timeout;
 
-  options = {
+  static defaultOptions: IShortcutServiceOptions = {
     sequenceTimeout: 500,
   };
+
+  options: IShortcutServiceOptions;
+
+  constructor(options?: Partial<IShortcutServiceOptions>) {
+    this.options = {
+      ...KeyboardService.defaultOptions,
+      ...options,
+    };
+  }
 
   private _reset = () => {
     this._curCI = null;
@@ -137,7 +147,7 @@ export class KeyboardService {
     };
   }
 
-  setContext(key: string, value: any) {
+  setContext(key: string, value: unknown) {
     this._context[key] = value;
     for (const cache of Object.values(this._conditionData)) {
       cache.result = this._evalCondition(cache.value);
