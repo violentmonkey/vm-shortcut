@@ -38,5 +38,11 @@ it('parseCondition', () => {
 
 it('reprShortcut', () => {
   expect(reprShortcut('c-s-a')).toEqual('^⇧A');
+  expect(reprShortcut('c-s-a', true)).toEqual('^⇧a');
+  expect(reprShortcut('c-s-enter')).toEqual('^⇧Enter');
+  expect(reprShortcut('c-s-enter', true)).toEqual('^⇧Enter');
   expect(reprShortcut('ctrlcmd-c')).toEqual('^C');
+  expect(reprShortcut('ctrlcmd-c', true)).toEqual('^c');
+  expect(reprShortcut('g')).toEqual('G');
+  expect(reprShortcut('g', true)).toEqual('g');
 });

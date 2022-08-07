@@ -28,7 +28,7 @@ export const aliases = {
   arrowdown: 'down',
   arrowleft: 'left',
   arrowright: 'right',
-  enter: 'cr',
+  cr: 'enter',
   escape: 'esc',
   ' ': 'space',
 };
@@ -79,7 +79,9 @@ export function parseCondition(condition: string): IShortcutCondition[] {
 export function reprShortcut(shortcut: string, caseSensitive = false) {
   const parts = normalizeKey(shortcut, caseSensitive).split('-');
   let base = parts.pop();
-  base = base[0].toUpperCase() + base.slice(1);
+  if (!caseSensitive || base.length > 1) {
+    base = base[0].toUpperCase() + base.slice(1);
+  }
   const modifiers = parts.map((p) => modifierSymbols[p]).filter(Boolean);
   return [...modifiers, base].join('');
 }
