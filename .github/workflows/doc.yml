@@ -13,12 +13,19 @@ jobs:
       - uses: actions/checkout@v2
         with:
           persist-credentials: false
+          fetch-depth: 100
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-src
+        with:
+          paths: package.json src
       - name: Build docs
+        if: steps.changed-src.outputs.changed == 'true'
         run: yarn && yarn build:docs
       - name: Deploy to GitHub Pages
+        if: steps.changed-src.outputs.changed == 'true'
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
           branch: gh-pages
