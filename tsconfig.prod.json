@@ -1,5 +1,10 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types"
+  },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx"

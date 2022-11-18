@@ -37,17 +37,18 @@
   ],
   "typings": "types/index.d.ts",
   "dependencies": {
-    "@babel/runtime": "^7.16.7"
+    "@babel/runtime": "^7.20.1"
   },
   "devDependencies": {
-    "@gera2ld/plaid": "~2.5.0",
-    "@gera2ld/plaid-common-ts": "~2.5.1-alpha.1",
-    "@gera2ld/plaid-rollup": "~2.5.0",
-    "@gera2ld/plaid-test": "^2.5.0",
-    "@typescript-eslint/parser": "^5.10.2",
-    "del-cli": "^4.0.1",
-    "husky": "^7.0.4",
-    "typedoc": "^0.22.11"
+    "@gera2ld/plaid": "~2.5.6",
+    "@gera2ld/plaid-common-ts": "~2.5.1",
+    "@gera2ld/plaid-rollup": "~2.5.6",
+    "@gera2ld/plaid-test": "~2.5.8",
+    "@typescript-eslint/parser": "^5.43.0",
+    "del-cli": "^5.0.0",
+    "husky": "^8.0.2",
+    "jest-environment-jsdom": "^29.3.1",
+    "typedoc": "^0.23.21"
   },
   "jest": {
     "testEnvironment": "jsdom"
