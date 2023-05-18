@@ -1,28 +1,28 @@
 import {
-  reprKey,
+  buildKey,
   normalizeKey,
   parseCondition,
   reprShortcut,
 } from '../src/util';
 
-it('reprKey', () => {
-  expect(reprKey('a', {})).toEqual('a');
-  expect(reprKey('A', {}, true)).toEqual('A');
-  expect(reprKey('f8', {}, true)).toEqual('f8');
-  expect(reprKey('a', { c: true })).toEqual('c-a');
-  expect(reprKey('A', { c: true }, true)).toEqual('c-A');
-  expect(reprKey('a', { c: true, s: true })).toEqual('c-s-a');
+it('buildKey', () => {
+  expect(buildKey('a', {})).toEqual('a');
+  expect(buildKey('A', {}, true)).toEqual('A');
+  expect(buildKey('f8', {}, true)).toEqual('f8');
+  expect(buildKey('a', { c: true })).toEqual('c-a');
+  expect(buildKey('A', { c: true }, true)).toEqual('c-A');
+  expect(buildKey('a', { c: true, s: true })).toEqual('c-s-a');
 });
 
 it('normalizeKey', () => {
-  expect(normalizeKey('i')).toEqual('i');
-  expect(normalizeKey('c-i')).toEqual('c-i');
+  expect(normalizeKey('i', false)).toEqual('i');
+  expect(normalizeKey('c-i', false)).toEqual('c-i');
   expect(normalizeKey('c-I', true)).toEqual('c-I');
-  expect(normalizeKey('ctrl-i')).toEqual('c-i');
-  expect(normalizeKey('ctrl-shift-i')).toEqual('c-s-i');
-  expect(normalizeKey('shift-ctrl-i')).toEqual('c-s-i');
-  expect(normalizeKey('F8')).toEqual('f8');
-  expect(normalizeKey('ctrl-F8')).toEqual('c-f8');
+  expect(normalizeKey('ctrl-i', false)).toEqual('c-i');
+  expect(normalizeKey('ctrl-shift-i', false)).toEqual('c-s-i');
+  expect(normalizeKey('shift-ctrl-i', false)).toEqual('c-s-i');
+  expect(normalizeKey('F8', false)).toEqual('f8');
+  expect(normalizeKey('ctrl-F8', false)).toEqual('c-f8');
 });
 
 it('parseCondition', () => {
@@ -43,6 +43,8 @@ it('reprShortcut', () => {
   expect(reprShortcut('c-s-enter', true)).toEqual('^⇧Enter');
   expect(reprShortcut('ctrlcmd-c')).toEqual('^C');
   expect(reprShortcut('ctrlcmd-c', true)).toEqual('^c');
+  expect(reprShortcut('c-a c-c')).toEqual('^A ^C');
   expect(reprShortcut('g')).toEqual('G');
   expect(reprShortcut('g', true)).toEqual('g');
+  expect(reprShortcut('g g', true)).toEqual('g g');
 });

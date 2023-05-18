@@ -5,7 +5,7 @@ import {
   IShortcutOptions,
   IShortcutServiceOptions,
 } from './types/shortcut';
-import { modifiers, normalizeSequence, parseCondition, reprKey } from './util';
+import { modifiers, normalizeSequence, parseCondition, buildKey } from './util';
 import { KeyNode } from './node';
 
 export * from './util';
@@ -199,7 +199,7 @@ export class KeyboardService {
     // Chrome sends a trusted keydown event with no key when choosing from autofill
     if (!e.key || (e.key.length > 1 && modifiers[e.key.toLowerCase()])) return;
     this._resetTimer();
-    const keyCS = reprKey(
+    const keyCS = buildKey(
       e.key,
       {
         c: e.ctrlKey,
@@ -208,7 +208,7 @@ export class KeyboardService {
       },
       true
     );
-    const keyCI = reprKey(e.key, {
+    const keyCI = buildKey(e.key, {
       c: e.ctrlKey,
       s: e.shiftKey,
       a: e.altKey,

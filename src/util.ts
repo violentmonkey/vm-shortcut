@@ -33,7 +33,7 @@ export const aliases = {
   ' ': 'space',
 };
 
-export function reprKey(
+export function buildKey(
   base: string,
   mod: IShortcutModifiers,
   caseSensitive = false
@@ -46,7 +46,7 @@ export function reprKey(
     .join('-');
 }
 
-export function normalizeKey(shortcut: string, caseSensitive = false) {
+export function normalizeKey(shortcut: string, caseSensitive: boolean) {
   const parts = shortcut.split('-');
   const base = parts.pop();
   const modifierState = {};
@@ -55,11 +55,15 @@ export function normalizeKey(shortcut: string, caseSensitive = false) {
     if (!key) throw new Error(`Unknown modifier key: ${part}`);
     modifierState[key] = true;
   }
-  return reprKey(base, modifierState, caseSensitive);
+  return buildKey(base, modifierState, caseSensitive);
 }
 
-export function normalizeSequence(sequence: string, caseSensitive: boolean) {
-  return sequence.split(' ').map((key) => normalizeKey(key, caseSensitive));
+function getSequence(input: string | string[]) {
+  return Array.isArray(input) ? input : input.split(/\s+/);
+}
+
+export function normalizeSequence(input: string | string[], caseSensitive: boolean) {
+  return getSequence(input).map((key) => normalizeKey(key, caseSensitive));
 }
 
 export function parseCondition(condition: string): IShortcutCondition[] {
@@ -76,12 +80,16 @@ export function parseCondition(condition: string): IShortcutCondition[] {
     .filter(Boolean);
 }
 
-export function reprShortcut(shortcut: string, caseSensitive = false) {
-  const parts = normalizeKey(shortcut, caseSensitive).split('-');
+export function reprKey(key: string, caseSensitive: boolean) {
+  const parts = normalizeKey(key, caseSensitive).split('-');
   let base = parts.pop();
   if (!caseSensitive || base.length > 1) {
     base = base[0].toUpperCase() + base.slice(1);
   }
   const modifiers = parts.map((p) => modifierSymbols[p]).filter(Boolean);
   return [...modifiers, base].join('');
+}
+
+export function reprShortcut(input: string | string[], caseSensitive = false) {
+  return getSequence(input).map(key => reprKey(key, caseSensitive)).join(' ');
 }
