@@ -57,7 +57,7 @@ const rollupConfig = [
       }),
     },
     output: {
-      format: 'umd',
+      format: 'iife',
       file: `${DIST}/${FILENAME}.js`,
       name: 'VM.shortcut',
       ...bundleOptions,
