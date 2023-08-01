@@ -2,6 +2,7 @@
 
 [![NPM](https://img.shields.io/npm/v/@violentmonkey/shortcut.svg)](https://npm.im/@violentmonkey/shortcut)
 ![License](https://img.shields.io/npm/l/@violentmonkey/shortcut.svg)
+[![jsDocs.io](https://img.shields.io/badge/jsDocs.io-reference-blue)](https://www.jsdocs.io/package/@violentmonkey/shortcut)
 
 Register a shortcut for a function.
 
@@ -122,6 +123,10 @@ service.disable();
 // Reenable the shortcuts later
 service.enable();
 ```
+
+## API
+
+[![jsDocs.io](https://img.shields.io/badge/jsDocs.io-reference-blue)](https://www.jsdocs.io/package/@violentmonkey/shortcut)
 
 ## Key Definition
 
