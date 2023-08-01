@@ -96,21 +96,26 @@ service.register('c-i', () => {
   console.log('You just pressed Ctrl-I');
 });
 
-// Only register the following key when `inputFocus` is false
-service.register('g g', () => {
-  console.log('Now inputFocus is false and you pressed `g g`');
-}, {
-  condition: '!inputFocus',
+// Only register the following key when `disableThisKey` is false
+service.register(
+  'g g',
+  () => {
+    console.log('Now disableThisKey is false and you pressed `g g`');
+  },
+  {
+    condition: '!disableThisKey',
+  }
+);
+
+// Update `disableThisKey` on different conditions
+// Note: these callbacks are just demos, you need to implement them by yourself!!!
+onOneCondition(() => {
+  service.setContext('disableThisKey', true);
+});
+onAnotherCondition(() => {
+  service.setContext('disableThisKey', false);
 });
 
-// Handle inputFocus using capture mode
-document.addEventListener('focus', (e) => {
-  if (isInput(e.target)) service.setContext('inputFocus', true);
-}, true);
-document.addEventListener('blur', (e) => {
-  if (isInput(e.target)) service.setContext('inputFocus', false);
-}, true);
-   
 // Disable the shortcuts and unbind all events whereever you want
 service.disable();
 
@@ -139,3 +144,11 @@ Possible modifiers are:
 - `ctrlcmd`
 
 There is one special case, `ctrlcmd` for `ctrl` on Windows and `cmd` for macOS, so if we register `ctrlcmd-s` to save something, the callback will be called when `ctrl-s` is pressed on Windows, and when `cmd-s` is pressed on macOS. This is useful to register cross-platform shortcuts.
+
+## Condition Syntax
+
+- `conditionA` - when `conditionA` is truthy
+- `!conditionB` - when `conditionB` is falsy
+- `conditionA && conditionB` - when both `conditionA` and `conditionB` are truthy
+
+For more complicated cases, it's recommended to handle the logic in a function and store the result as a simple condition to the context.
