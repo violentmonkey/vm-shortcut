@@ -37,7 +37,7 @@ This is a helper script for Violentmonkey.
 1. Register a shortcut:
 
    ```js
-   const { register } = VM.shortcut;
+   import { register } from '@violentmonkey/shortcut';
 
    register('c-i', () => {
      console.log('You just pressed Ctrl-I');
@@ -49,7 +49,7 @@ This is a helper script for Violentmonkey.
 1. Enable or disable all shortcuts:
 
    ```js
-   const { enable, disable } = VM.shortcut;
+   import { enable, disable } from '@violentmonkey/shortcut';
 
    disable();
    // ...
@@ -59,7 +59,7 @@ This is a helper script for Violentmonkey.
 1. Key sequences:
 
    ```js
-   const { register } = VM.shortcut;
+   import { register } from '@violentmonkey/shortcut';
 
    register('c-a c-b', () => {
      console.log('You just pressed Ctrl-A Ctrl-B sequence');
@@ -69,7 +69,7 @@ This is a helper script for Violentmonkey.
 1. Handle keys with custom listeners (e.g. use with text editor like TinyMCE):
 
    ```js
-   const { handleKey } = VM.shortcut;
+   import { handleKey } from '@violentmonkey/shortcut';
 
    function onKeyDown(e) {
      handleKey(e);
