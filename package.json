@@ -6,13 +6,13 @@
   "license": "ISC",
   "scripts": {
     "prepare": "husky install",
-    "dev": "rollup -wc rollup.conf.js",
+    "dev": "rollup -wc",
     "prepublishOnly": "run-s build",
     "lint": "eslint --ext .ts,.tsx src test",
     "test": "jest",
     "ci": "run-s lint test",
     "clean": "del-cli dist types",
-    "build:js": "cross-env NODE_ENV=production rollup -c rollup.conf.js",
+    "build:js": "cross-env NODE_ENV=production rollup -c",
     "build:types": "tsc -p tsconfig.prod.json",
     "build": "run-s ci clean build:types build:js",
     "build:docs": "typedoc src/index.ts"
@@ -30,7 +30,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/index.mjs",
   "files": [
     "dist",
     "types"
