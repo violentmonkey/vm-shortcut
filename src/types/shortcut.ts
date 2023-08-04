@@ -33,3 +33,9 @@ export interface IShortcutServiceOptions {
   /** Max timeout between two keys within a sequence. */
   sequenceTimeout: number;
 }
+
+export interface IShortcutKey {
+  base: string;
+  modifierState: IShortcutModifiers;
+  caseSensitive: boolean;
+}

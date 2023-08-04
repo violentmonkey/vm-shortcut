@@ -1,4 +1,7 @@
-import { IShortcutModifiers, IShortcutCondition } from './types/shortcut';
+import {
+  IShortcutCondition,
+  IShortcutKey,
+} from './types/shortcut';
 
 const isMacintosh = navigator.userAgent.includes('Macintosh');
 
@@ -15,6 +18,8 @@ export const modifiers = {
   cmd: 'm',
   ctrlcmd: isMacintosh ? 'm' : 'c',
 };
+
+export const modifierList = ['m', 'c', 's', 'a'] as const;
 
 export const modifierSymbols = {
   c: '^',
@@ -33,21 +38,30 @@ export const aliases = {
   ' ': 'space',
 };
 
-export function buildKey(
-  base: string,
-  mod: IShortcutModifiers,
-  caseSensitive = false
-) {
-  const { c, s, a, m } = mod;
+export function buildKey(key: IShortcutKey) {
+  const { caseSensitive, modifierState } = key;
+  let { base } = key;
   if (!caseSensitive || base.length > 1) base = base.toLowerCase();
   base = aliases[base] || base;
-  return [m && 'm', c && 'c', s && 's', a && 'a', base]
+  return [...modifierList.filter((m) => modifierState[m]), base]
     .filter(Boolean)
     .join('-');
 }
 
-export function normalizeKey(shortcut: string, caseSensitive: boolean) {
-  const parts = shortcut.split('-');
+function breakKey(shortcut: string) {
+  const pieces = shortcut.split(/-(.)/);
+  const parts: string[] = [pieces[0]];
+  for (let i = 1; i < pieces.length; i += 2) {
+    parts.push(pieces[i] + pieces[i + 1]);
+  }
+  return parts;
+}
+
+export function parseKey(
+  shortcut: string,
+  caseSensitive: boolean
+): IShortcutKey {
+  const parts = breakKey(shortcut);
   const base = parts.pop();
   const modifierState = {};
   for (const part of parts) {
@@ -55,15 +69,18 @@ export function normalizeKey(shortcut: string, caseSensitive: boolean) {
     if (!key) throw new Error(`Unknown modifier key: ${part}`);
     modifierState[key] = true;
   }
-  return buildKey(base, modifierState, caseSensitive);
+  return { base, modifierState, caseSensitive };
 }
 
 function getSequence(input: string | string[]) {
   return Array.isArray(input) ? input : input.split(/\s+/);
 }
 
-export function normalizeSequence(input: string | string[], caseSensitive: boolean) {
-  return getSequence(input).map((key) => normalizeKey(key, caseSensitive));
+export function normalizeSequence(
+  input: string | string[],
+  caseSensitive: boolean
+) {
+  return getSequence(input).map((key) => parseKey(key, caseSensitive));
 }
 
 export function parseCondition(condition: string): IShortcutCondition[] {
@@ -80,16 +97,21 @@ export function parseCondition(condition: string): IShortcutCondition[] {
     .filter(Boolean);
 }
 
-export function reprKey(key: string, caseSensitive: boolean) {
-  const parts = normalizeKey(key, caseSensitive).split('-');
-  let base = parts.pop();
+export function reprKey(key: IShortcutKey) {
+  const { modifierState, caseSensitive } = key;
+  let { base } = key;
   if (!caseSensitive || base.length > 1) {
     base = base[0].toUpperCase() + base.slice(1);
   }
-  const modifiers = parts.map((p) => modifierSymbols[p]).filter(Boolean);
+  const modifiers = modifierList
+    .filter((m) => modifierState[m])
+    .map((m) => modifierSymbols[m]);
   return [...modifiers, base].join('');
 }
 
 export function reprShortcut(input: string | string[], caseSensitive = false) {
-  return getSequence(input).map(key => reprKey(key, caseSensitive)).join(' ');
+  return getSequence(input)
+    .map((key) => parseKey(key, caseSensitive))
+    .map((key) => reprKey(key))
+    .join(' ');
 }

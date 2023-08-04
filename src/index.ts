@@ -124,7 +124,9 @@ export class KeyboardService {
       caseSensitive: false,
       ...options,
     };
-    const sequence = normalizeSequence(key, caseSensitive);
+    const sequence = normalizeSequence(key, caseSensitive).map((key) =>
+      buildKey(key)
+    );
     const data = caseSensitive ? this._dataCS : this._dataCI;
     const item: IShortcut = {
       sequence,
@@ -199,20 +201,24 @@ export class KeyboardService {
     // Chrome sends a trusted keydown event with no key when choosing from autofill
     if (!e.key || (e.key.length > 1 && modifiers[e.key.toLowerCase()])) return;
     this._resetTimer();
-    const keyCS = buildKey(
-      e.key,
-      {
+    const keyCS = buildKey({
+      base: e.key,
+      modifierState: {
         c: e.ctrlKey,
         a: e.altKey,
         m: e.metaKey,
       },
-      true
-    );
-    const keyCI = buildKey(e.key, {
-      c: e.ctrlKey,
-      s: e.shiftKey,
-      a: e.altKey,
-      m: e.metaKey,
+      caseSensitive: true,
+    });
+    const keyCI = buildKey({
+      base: e.key,
+      modifierState: {
+        c: e.ctrlKey,
+        s: e.shiftKey,
+        a: e.altKey,
+        m: e.metaKey,
+      },
+      caseSensitive: false,
     });
     if (this.handleKeyOnce(keyCS, keyCI, false)) {
       e.preventDefault();
@@ -238,12 +244,3 @@ export const enable = () => getService().enable();
 export const disable = () => getService().disable();
 export const handleKey = (...args: Parameters<KeyboardService['handleKey']>) =>
   getService().handleKey(...args);
-
-if (process.env.VM && typeof VM !== 'undefined') {
-  VM.registerShortcut = (key: string, callback: () => void) => {
-    console.warn(
-      '[vm-shortcut] VM.registerShortcut is deprecated in favor of VM.shortcut.register, and will be removed in 2.x'
-    );
-    register(key, callback);
-  };
-}

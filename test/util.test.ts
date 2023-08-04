@@ -1,28 +1,81 @@
-import {
-  buildKey,
-  normalizeKey,
-  parseCondition,
-  reprShortcut,
-} from '../src/util';
+import { buildKey, parseKey, parseCondition, reprShortcut } from '../src/util';
 
 it('buildKey', () => {
-  expect(buildKey('a', {})).toEqual('a');
-  expect(buildKey('A', {}, true)).toEqual('A');
-  expect(buildKey('f8', {}, true)).toEqual('f8');
-  expect(buildKey('a', { c: true })).toEqual('c-a');
-  expect(buildKey('A', { c: true }, true)).toEqual('c-A');
-  expect(buildKey('a', { c: true, s: true })).toEqual('c-s-a');
+  expect(
+    buildKey({ base: 'a', modifierState: {}, caseSensitive: false })
+  ).toEqual('a');
+  expect(
+    buildKey({ base: 'A', modifierState: {}, caseSensitive: true })
+  ).toEqual('A');
+  expect(
+    buildKey({ base: 'f8', modifierState: {}, caseSensitive: true })
+  ).toEqual('f8');
+  expect(
+    buildKey({ base: 'a', modifierState: { c: true }, caseSensitive: false })
+  ).toEqual('c-a');
+  expect(
+    buildKey({ base: 'A', modifierState: { c: true }, caseSensitive: true })
+  ).toEqual('c-A');
+  expect(
+    buildKey({
+      base: 'a',
+      modifierState: { c: true, s: true },
+      caseSensitive: false,
+    })
+  ).toEqual('c-s-a');
 });
 
-it('normalizeKey', () => {
-  expect(normalizeKey('i', false)).toEqual('i');
-  expect(normalizeKey('c-i', false)).toEqual('c-i');
-  expect(normalizeKey('c-I', true)).toEqual('c-I');
-  expect(normalizeKey('ctrl-i', false)).toEqual('c-i');
-  expect(normalizeKey('ctrl-shift-i', false)).toEqual('c-s-i');
-  expect(normalizeKey('shift-ctrl-i', false)).toEqual('c-s-i');
-  expect(normalizeKey('F8', false)).toEqual('f8');
-  expect(normalizeKey('ctrl-F8', false)).toEqual('c-f8');
+it('parseKey', () => {
+  expect(parseKey('i', false)).toEqual({
+    base: 'i',
+    modifierState: {},
+    caseSensitive: false,
+  });
+  expect(parseKey('c-i', false)).toEqual({
+    base: 'i',
+    modifierState: { c: true },
+    caseSensitive: false,
+  });
+  expect(parseKey('c-I', true)).toEqual({
+    base: 'I',
+    modifierState: { c: true },
+    caseSensitive: true,
+  });
+  expect(parseKey('ctrl-i', false)).toEqual({
+    base: 'i',
+    modifierState: { c: true },
+    caseSensitive: false,
+  });
+  expect(parseKey('ctrl-shift-i', false)).toEqual({
+    base: 'i',
+    modifierState: { c: true, s: true },
+    caseSensitive: false,
+  });
+  expect(parseKey('shift-ctrl-i', false)).toEqual({
+    base: 'i',
+    modifierState: { c: true, s: true },
+    caseSensitive: false,
+  });
+  expect(parseKey('F8', false)).toEqual({
+    base: 'F8',
+    modifierState: {},
+    caseSensitive: false,
+  });
+  expect(parseKey('ctrl-F8', false)).toEqual({
+    base: 'F8',
+    modifierState: { c: true },
+    caseSensitive: false,
+  });
+  expect(parseKey('-', false)).toEqual({
+    base: '-',
+    modifierState: {},
+    caseSensitive: false,
+  });
+  expect(parseKey('c--', false)).toEqual({
+    base: '-',
+    modifierState: { c: true },
+    caseSensitive: false,
+  });
 });
 
 it('parseCondition', () => {
@@ -47,4 +100,5 @@ it('reprShortcut', () => {
   expect(reprShortcut('g')).toEqual('G');
   expect(reprShortcut('g', true)).toEqual('g');
   expect(reprShortcut('g g', true)).toEqual('g g');
+  expect(reprShortcut('c--', false)).toEqual('^-');
 });
