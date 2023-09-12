@@ -93,12 +93,13 @@
         }
       }
     </style>
-    <div id="app" class="max-w-screen-md mx-auto px-2" un-cloak>
-      <h1 class="text-xl mb-2 text-center">
-        <em>@violentmonkey/shortcut</em> Playground
-      </h1>
+    <div id="app" class="max-w-screen-lg mx-auto px-2" un-cloak>
+      <h1 class="text-center"><em>@violentmonkey/shortcut</em> Playground</h1>
+      <h2>Triggering a Shortcut</h2>
       <div class="flex mb-2">
-        <div class="flex-1">Declare your shortcuts here:</div>
+        <div class="flex-1">
+          Declare your shortcuts here: (one sequence in a line)
+        </div>
         <label>
           <input type="checkbox" v-model="caseSensitive" /> Case sensitive
         </label>
@@ -113,11 +114,13 @@
           You just triggered
           <span class="text-blue-600" v-text="keyTriggered"></span>!
         </div>
-        <div v-else>Press a key and see how it is represented.</div>
+        <div v-else>Try to trigger a shortcut sequence declared above.</div>
       </div>
+      <h2 class="mt-12">Inspecting a Key</h2>
+      <div class="mb-2">Press a key to see how it is represented.</div>
       <div class="mb-2 text-sm text-gray-600">
-        Note:
-        <ul class="mt-0">
+        <p>Note:</p>
+        <ul>
           <li>
             <kbd class="kbd">Alt</kbd>/<kbd class="kbd">Opt</kbd>/<kbd
               class="kbd"
@@ -158,6 +161,8 @@
             class="m-0 p-2 border border-solid border-blue-400 bg-blue-100"
           >
 VM.shortcut.register({{ JSON.stringify(keyExpCI) }}, callback);
+// or
+VM.shortcut.register({{ JSON.stringify(keyExpCICode) }}, callback);
 </pre
           >
         </div>
