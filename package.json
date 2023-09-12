@@ -8,7 +8,8 @@
     "prepare": "husky install",
     "dev": "rollup -wc",
     "prepublishOnly": "run-s build",
-    "lint": "eslint --ext .ts,.tsx src test",
+    "lint": "eslint --ext .ts,.tsx . && prettier -c --ignore-path=.eslintignore .",
+    "lint:fix": "eslint --ext .ts,.tsx . --fix && prettier -c --ignore-path=.eslintignore . -w",
     "test": "jest",
     "ci": "run-s lint test",
     "clean": "del-cli dist types",
@@ -37,18 +38,17 @@
   ],
   "typings": "types/index.d.ts",
   "dependencies": {
-    "@babel/runtime": "^7.20.1"
+    "@babel/runtime": "^7.22.15"
   },
   "devDependencies": {
-    "@gera2ld/plaid": "~2.5.6",
-    "@gera2ld/plaid-common-ts": "~2.5.1",
-    "@gera2ld/plaid-rollup": "~2.5.6",
-    "@gera2ld/plaid-test": "~2.5.8",
-    "@typescript-eslint/parser": "^5.43.0",
-    "del-cli": "^5.0.0",
-    "husky": "^8.0.2",
-    "jest-environment-jsdom": "^29.3.1",
-    "typedoc": "^0.23.21"
+    "@gera2ld/plaid": "~2.6.0",
+    "@gera2ld/plaid-rollup": "~2.6.0",
+    "@gera2ld/plaid-test": "~2.6.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "del-cli": "^5.1.0",
+    "husky": "^8.0.3",
+    "jest-environment-jsdom": "^29.7.0",
+    "typedoc": "^0.25.1"
   },
   "jest": {
     "testEnvironment": "jsdom"
