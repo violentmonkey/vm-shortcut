@@ -14,6 +14,7 @@ import {
 } from './util';
 import { addKeyNode, createKeyNode, getKeyNode, removeKeyNode } from './node';
 import { modifiers } from './constants';
+import { Subject } from './subject';
 
 export * from './constants';
 export * from './types';
@@ -29,6 +30,8 @@ export class KeyboardService {
   private _root = createKeyNode();
 
   private _cur: IKeyNode | undefined;
+
+  sequence = new Subject<string[]>([]);
 
   private _timer = 0;
 
@@ -47,6 +50,7 @@ export class KeyboardService {
 
   private _reset = () => {
     this._cur = undefined;
+    this.sequence.set([]);
     this._resetTimer();
   };
 
@@ -169,7 +173,10 @@ export class KeyboardService {
       let next: IKeyNode | undefined;
       for (const key of keyExps) {
         next = getKeyNode(cur, [key]);
-        if (next) break;
+        if (next) {
+          this.sequence.set([...this.sequence.get(), key]);
+          break;
+        }
       }
       cur = next;
     }
@@ -177,6 +184,7 @@ export class KeyboardService {
     const [shortcut] = [...(cur?.shortcuts || [])];
     if (!fromRoot && !shortcut && !cur?.children.size) {
       // Nothing is matched with the last key, rematch from root
+      this._reset();
       return this.handleKeyOnce(keyExps, true);
     }
     if (shortcut) {
@@ -237,7 +245,7 @@ export class KeyboardService {
 
 let service: KeyboardService;
 
-function getService() {
+export function getService() {
   if (!service) {
     service = new KeyboardService();
     service.enable();
