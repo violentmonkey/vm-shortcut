@@ -1,6 +1,9 @@
-import { KeyNode } from '../src/node';
+import { addKeyNode, createKeyNode, removeKeyNode } from '../src/node';
+import { IKeyNode } from '../src/types';
 
-function toJSON(node: KeyNode) {
+type ISerializedNode = [number, Array<[string, ISerializedNode]>];
+
+function toJSON(node: IKeyNode): ISerializedNode {
   return [
     node.shortcuts.size,
     Array.from(node.children.entries(), ([key, child]) => [key, toJSON(child)]),
@@ -20,11 +23,11 @@ function createShortcut() {
 
 describe('KeyNode', () => {
   test('add', () => {
-    const tree = new KeyNode();
-    tree.add(['a'], createShortcut());
-    tree.add(['a', 'b'], createShortcut());
-    tree.add(['a', 'c', 'd'], createShortcut());
-    tree.add(['a', 'c', 'd'], createShortcut());
+    const tree = createKeyNode();
+    addKeyNode(tree, ['a'], createShortcut());
+    addKeyNode(tree, ['a', 'b'], createShortcut());
+    addKeyNode(tree, ['a', 'c', 'd'], createShortcut());
+    addKeyNode(tree, ['a', 'c', 'd'], createShortcut());
     expect(toJSON(tree)).toEqual([
       0,
       [
@@ -43,11 +46,11 @@ describe('KeyNode', () => {
   });
 
   test('remove', () => {
-    const tree = new KeyNode();
-    tree.add(['a'], createShortcut());
-    tree.add(['a', 'b'], createShortcut());
-    tree.add(['a', 'c', 'd'], createShortcut());
-    tree.remove(['a', 'c', 'd']);
+    const tree = createKeyNode();
+    addKeyNode(tree, ['a'], createShortcut());
+    addKeyNode(tree, ['a', 'b'], createShortcut());
+    addKeyNode(tree, ['a', 'c', 'd'], createShortcut());
+    removeKeyNode(tree, ['a', 'c', 'd']);
     expect(toJSON(tree)).toEqual([0, [['a', [1, [['b', [1, []]]]]]]]);
   });
 });

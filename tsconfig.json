@@ -4,6 +4,7 @@
     "module": "es6",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
+    "strict": true,
     "jsx": "react"
   },
   "include": [

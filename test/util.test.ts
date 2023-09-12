@@ -2,27 +2,27 @@ import { buildKey, parseKey, parseCondition, reprShortcut } from '../src/util';
 
 it('buildKey', () => {
   expect(
-    buildKey({ base: 'a', modifierState: {}, caseSensitive: false })
-  ).toEqual('a');
+    buildKey({ base: 'a', modifierState: {}, caseSensitive: false }),
+  ).toEqual('i:a');
   expect(
-    buildKey({ base: 'A', modifierState: {}, caseSensitive: true })
+    buildKey({ base: 'A', modifierState: {}, caseSensitive: true }),
   ).toEqual('A');
   expect(
-    buildKey({ base: 'f8', modifierState: {}, caseSensitive: true })
+    buildKey({ base: 'f8', modifierState: {}, caseSensitive: true }),
   ).toEqual('f8');
   expect(
-    buildKey({ base: 'a', modifierState: { c: true }, caseSensitive: false })
-  ).toEqual('c-a');
+    buildKey({ base: 'a', modifierState: { c: true }, caseSensitive: false }),
+  ).toEqual('i:c-a');
   expect(
-    buildKey({ base: 'A', modifierState: { c: true }, caseSensitive: true })
+    buildKey({ base: 'A', modifierState: { c: true }, caseSensitive: true }),
   ).toEqual('c-A');
   expect(
     buildKey({
       base: 'a',
       modifierState: { c: true, s: true },
       caseSensitive: false,
-    })
-  ).toEqual('c-s-a');
+    }),
+  ).toEqual('i:c-s-a');
 });
 
 it('parseKey', () => {
@@ -91,7 +91,7 @@ it('parseCondition', () => {
 
 it('reprShortcut', () => {
   expect(reprShortcut('c-s-a')).toEqual('^⇧A');
-  expect(reprShortcut('c-s-a', true)).toEqual('^⇧a');
+  expect(reprShortcut('c-s-a', true)).toEqual('^⇧A');
   expect(reprShortcut('c-s-enter')).toEqual('^⇧Enter');
   expect(reprShortcut('c-s-enter', true)).toEqual('^⇧Enter');
   expect(reprShortcut('ctrlcmd-c')).toEqual('^C');

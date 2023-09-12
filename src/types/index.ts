@@ -18,6 +18,11 @@ export interface IShortcut {
   caseSensitive: boolean;
 }
 
+export interface IKeyNode {
+  shortcuts: Set<IShortcut>;
+  children: Map<string, IKeyNode>;
+}
+
 export interface IShortcutConditionCache {
   count: number;
   value: IShortcutCondition[];

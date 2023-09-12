@@ -1,51 +1,15 @@
-import {
-  IShortcutCondition,
-  IShortcutKey,
-} from './types/shortcut';
-
-const isMacintosh = navigator.userAgent.includes('Macintosh');
-
-export const modifiers = {
-  c: 'c',
-  s: 's',
-  a: 'a',
-  m: 'm',
-  ctrl: 'c',
-  control: 'c', // macOS
-  shift: 's',
-  alt: 'a',
-  meta: 'm',
-  cmd: 'm',
-  ctrlcmd: isMacintosh ? 'm' : 'c',
-};
-
-export const modifierList = ['m', 'c', 's', 'a'] as const;
-
-export const modifierSymbols = {
-  c: '^',
-  s: '⇧',
-  a: '⌥',
-  m: '⌘',
-};
-
-export const aliases = {
-  arrowup: 'up',
-  arrowdown: 'down',
-  arrowleft: 'left',
-  arrowright: 'right',
-  cr: 'enter',
-  escape: 'esc',
-  ' ': 'space',
-};
+import { aliases, modifiers, modifierList, modifierSymbols } from './constants';
+import { IShortcutCondition, IShortcutKey, IShortcutModifiers } from './types';
 
 export function buildKey(key: IShortcutKey) {
   const { caseSensitive, modifierState } = key;
   let { base } = key;
   if (!caseSensitive || base.length > 1) base = base.toLowerCase();
   base = aliases[base] || base;
-  return [...modifierList.filter((m) => modifierState[m]), base]
+  const keyExp = [...modifierList.filter((m) => modifierState[m]), base]
     .filter(Boolean)
     .join('-');
+  return `${caseSensitive ? '' : 'i:'}${keyExp}`;
 }
 
 function breakKey(shortcut: string) {
@@ -59,16 +23,21 @@ function breakKey(shortcut: string) {
 
 export function parseKey(
   shortcut: string,
-  caseSensitive: boolean
+  caseSensitive: boolean,
 ): IShortcutKey {
   const parts = breakKey(shortcut);
-  const base = parts.pop();
-  const modifierState = {};
+  const base = parts.pop() as string;
+  const modifierState: IShortcutModifiers = {};
   for (const part of parts) {
     const key = modifiers[part.toLowerCase()];
     if (!key) throw new Error(`Unknown modifier key: ${part}`);
     modifierState[key] = true;
   }
+  // Alt/Shift modifies the character.
+  // In case sensitive mode, we only need to check the modified character: <c-A> = Ctrl+Shift+KeyA
+  // In case insensitive mode, we check the keyCode as well as modifiers: <c-s-a> = Ctrl+Shift+KeyA
+  // So if Alt/Shift appears in the shortcut, we must switch to case insensitive mode.
+  caseSensitive &&= !(modifierState.a || modifierState.s);
   return { base, modifierState, caseSensitive };
 }
 
@@ -78,7 +47,7 @@ function getSequence(input: string | string[]) {
 
 export function normalizeSequence(
   input: string | string[],
-  caseSensitive: boolean
+  caseSensitive: boolean,
 ) {
   return getSequence(input).map((key) => parseKey(key, caseSensitive));
 }
@@ -94,7 +63,7 @@ export function parseCondition(condition: string): IShortcutCondition[] {
       }
       return { not: false, field: key };
     })
-    .filter(Boolean);
+    .filter(Boolean) as IShortcutCondition[];
 }
 
 export function reprKey(key: IShortcutKey) {
@@ -114,4 +83,11 @@ export function reprShortcut(input: string | string[], caseSensitive = false) {
     .map((key) => parseKey(key, caseSensitive))
     .map((key) => reprKey(key))
     .join(' ');
+}
+
+/**
+ * Get the original character from `event.code` for keys that can be modified by `Alt/Shift`.
+ */
+export function getOriginalKey(e: KeyboardEvent) {
+  return /^(?:Digit|Key)\w$/.test(e.code) ? e.code[e.code.length - 1] : e.key;
 }

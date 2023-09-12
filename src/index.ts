@@ -1,34 +1,36 @@
 import {
+  IKeyNode,
   IShortcut,
   IShortcutCondition,
   IShortcutConditionCache,
   IShortcutOptions,
   IShortcutServiceOptions,
-} from './types/shortcut';
-import { modifiers, normalizeSequence, parseCondition, buildKey } from './util';
-import { KeyNode } from './node';
+} from './types';
+import {
+  normalizeSequence,
+  parseCondition,
+  getOriginalKey,
+  buildKey,
+} from './util';
+import { addKeyNode, createKeyNode, getKeyNode, removeKeyNode } from './node';
+import { modifiers } from './constants';
 
+export * from './constants';
+export * from './types';
 export * from './util';
-export * from './types/shortcut';
 
 export class KeyboardService {
   private _context: Record<string, unknown> = {};
 
   private _conditionData: { [key: string]: IShortcutConditionCache } = {};
 
-  private _dataCI: IShortcut[] = [];
+  private _data: IShortcut[] = [];
 
-  private _dataCS: IShortcut[] = [];
+  private _root = createKeyNode();
 
-  private _rootCI = new KeyNode();
+  private _cur: IKeyNode | undefined;
 
-  private _rootCS = new KeyNode();
-
-  private _curCI: KeyNode;
-
-  private _curCS: KeyNode;
-
-  private _timer: NodeJS.Timeout;
+  private _timer = 0;
 
   static defaultOptions: IShortcutServiceOptions = {
     sequenceTimeout: 500,
@@ -44,15 +46,14 @@ export class KeyboardService {
   }
 
   private _reset = () => {
-    this._curCI = null;
-    this._curCS = null;
+    this._cur = undefined;
     this._resetTimer();
   };
 
   private _resetTimer() {
     if (this._timer) {
-      clearTimeout(this._timer);
-      this._timer = null;
+      window.clearTimeout(this._timer);
+      this._timer = 0;
     }
   }
 
@@ -98,12 +99,11 @@ export class KeyboardService {
   }
 
   private _enableShortcut(item: IShortcut) {
-    const root = item.caseSensitive ? this._rootCS : this._rootCI;
-    if (item.enabled) {
-      root.add(item.sequence, item);
-    } else {
-      root.remove(item.sequence, item);
-    }
+    (item.enabled ? addKeyNode : removeKeyNode)(
+      this._root,
+      item.sequence,
+      item,
+    );
   }
 
   enable() {
@@ -118,16 +118,15 @@ export class KeyboardService {
   register(
     key: string,
     callback: () => void,
-    options?: Partial<IShortcutOptions>
+    options?: Partial<IShortcutOptions>,
   ) {
     const { caseSensitive, condition }: IShortcutOptions = {
       caseSensitive: false,
       ...options,
     };
     const sequence = normalizeSequence(key, caseSensitive).map((key) =>
-      buildKey(key)
+      buildKey(key),
     );
-    const data = caseSensitive ? this._dataCS : this._dataCI;
     const item: IShortcut = {
       sequence,
       condition,
@@ -137,11 +136,11 @@ export class KeyboardService {
     };
     if (condition) this._addCondition(condition);
     this._checkShortcut(item);
-    data.push(item);
+    this._data.push(item);
     return () => {
-      const index = data.indexOf(item);
+      const index = this._data.indexOf(item);
       if (index >= 0) {
-        data.splice(index, 1);
+        this._data.splice(index, 1);
         if (condition) this._removeCondition(condition);
         item.enabled = false;
         this._enableShortcut(item);
@@ -154,40 +153,33 @@ export class KeyboardService {
     for (const cache of Object.values(this._conditionData)) {
       cache.result = this._evalCondition(cache.value);
     }
-    for (const data of [this._dataCS, this._dataCI]) {
-      for (const item of data) {
-        this._checkShortcut(item);
-      }
+    for (const item of this._data) {
+      this._checkShortcut(item);
     }
   }
 
-  handleKeyOnce(keyCS: string, keyCI: string, fromRoot: boolean) {
-    let curCS = this._curCS;
-    let curCI = this._curCI;
-    if (fromRoot || (!curCS && !curCI)) {
+  handleKeyOnce(keyExps: string[], fromRoot: boolean): boolean {
+    let cur: IKeyNode | undefined = this._cur;
+    if (fromRoot || !cur) {
       // set fromRoot to true to avoid another retry
       fromRoot = true;
-      curCS = this._rootCS;
-      curCI = this._rootCI;
+      cur = this._root;
     }
-    if (curCS) curCS = curCS.get([keyCS]);
-    if (curCI) curCI = curCI.get([keyCI]);
-    const shortcuts = [
-      ...(curCI ? curCI.shortcuts : []),
-      ...(curCS ? curCS.shortcuts : []),
-    ].reverse();
-    this._curCS = curCS;
-    this._curCI = curCI;
-    if (
-      !fromRoot &&
-      !shortcuts.length &&
-      !curCS?.children.size &&
-      !curCI?.children.size
-    ) {
+    if (cur) {
+      let next: IKeyNode | undefined;
+      for (const key of keyExps) {
+        next = getKeyNode(cur, [key]);
+        if (next) break;
+      }
+      cur = next;
+    }
+    this._cur = cur;
+    const [shortcut] = [...(cur?.shortcuts || [])];
+    if (!fromRoot && !shortcut && !cur?.children.size) {
       // Nothing is matched with the last key, rematch from root
-      return this.handleKeyOnce(keyCS, keyCI, true);
+      return this.handleKeyOnce(keyExps, true);
     }
-    for (const shortcut of shortcuts) {
+    if (shortcut) {
       try {
         shortcut.callback();
       } catch {
@@ -195,36 +187,51 @@ export class KeyboardService {
       }
       return true;
     }
+    return false;
   }
 
   handleKey = (e: KeyboardEvent) => {
     // Chrome sends a trusted keydown event with no key when choosing from autofill
     if (!e.key || (e.key.length > 1 && modifiers[e.key.toLowerCase()])) return;
     this._resetTimer();
-    const keyCS = buildKey({
-      base: e.key,
-      modifierState: {
-        c: e.ctrlKey,
-        a: e.altKey,
-        m: e.metaKey,
-      },
-      caseSensitive: true,
-    });
-    const keyCI = buildKey({
-      base: e.key,
-      modifierState: {
-        c: e.ctrlKey,
-        s: e.shiftKey,
-        a: e.altKey,
-        m: e.metaKey,
-      },
-      caseSensitive: false,
-    });
-    if (this.handleKeyOnce(keyCS, keyCI, false)) {
+    const keyExps = [
+      // case sensitive mode, `e.key` is the character considering Alt/Shift
+      buildKey({
+        base: e.key,
+        modifierState: {
+          c: e.ctrlKey,
+          m: e.metaKey,
+        },
+        caseSensitive: true,
+      }),
+      // case insensitive mode, using `e.code` with modifiers including Alt/Shift
+      buildKey({
+        base: e.code,
+        modifierState: {
+          c: e.ctrlKey,
+          s: e.shiftKey,
+          a: e.altKey,
+          m: e.metaKey,
+        },
+        caseSensitive: false,
+      }),
+      // case insensitive mode, using `e.code` for keys that can be modified by `Alt/Shift`, otherwise `e.key`
+      buildKey({
+        base: getOriginalKey(e),
+        modifierState: {
+          c: e.ctrlKey,
+          s: e.shiftKey,
+          a: e.altKey,
+          m: e.metaKey,
+        },
+        caseSensitive: false,
+      }),
+    ];
+    if (this.handleKeyOnce(keyExps, false)) {
       e.preventDefault();
       this._reset();
     }
-    this._timer = setTimeout(this._reset, this.options.sequenceTimeout);
+    this._timer = window.setTimeout(this._reset, this.options.sequenceTimeout);
   };
 }
 
