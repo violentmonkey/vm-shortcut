@@ -192,7 +192,7 @@ export class KeyboardService {
 
   handleKey = (e: KeyboardEvent) => {
     // Chrome sends a trusted keydown event with no key when choosing from autofill
-    if (!e.key || (e.key.length > 1 && modifiers[e.key.toLowerCase()])) return;
+    if (!e.key || modifiers[e.key.toLowerCase()]) return;
     this._resetTimer();
     const keyExps = [
       // case sensitive mode, `e.key` is the character considering Alt/Shift

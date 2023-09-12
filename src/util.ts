@@ -1,4 +1,9 @@
-import { aliases, modifiers, modifierList, modifierSymbols } from './constants';
+import {
+  aliases,
+  modifierAliases,
+  modifierList,
+  modifierSymbols,
+} from './constants';
 import { IShortcutCondition, IShortcutKey, IShortcutModifiers } from './types';
 
 export function buildKey(key: IShortcutKey) {
@@ -29,7 +34,7 @@ export function parseKey(
   const base = parts.pop() as string;
   const modifierState: IShortcutModifiers = {};
   for (const part of parts) {
-    const key = modifiers[part.toLowerCase()];
+    const key = modifierAliases[part.toLowerCase()];
     if (!key) throw new Error(`Unknown modifier key: ${part}`);
     modifierState[key] = true;
   }

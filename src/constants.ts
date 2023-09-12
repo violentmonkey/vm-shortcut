@@ -2,17 +2,23 @@ const isMacintosh = navigator.userAgent.includes('Macintosh');
 
 export const modifierList = ['m', 'c', 's', 'a'] as const;
 
-export const modifiers: Record<string, (typeof modifierList)[number]> = {
-  c: 'c',
-  s: 's',
-  a: 'a',
-  m: 'm',
+export type IModifier = (typeof modifierList)[number];
+
+export const modifiers: Record<string, IModifier> = {
   ctrl: 'c',
   control: 'c', // macOS
   shift: 's',
   alt: 'a',
   meta: 'm',
   cmd: 'm',
+};
+
+export const modifierAliases: Record<string, IModifier> = {
+  ...modifiers,
+  c: 'c',
+  s: 's',
+  a: 'a',
+  m: 'm',
   ctrlcmd: isMacintosh ? 'm' : 'c',
 };
 
