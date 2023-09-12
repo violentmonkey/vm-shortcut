@@ -13,9 +13,11 @@
         box-sizing: border-box;
         user-select: none;
       }
+
       body {
         font-family: 'Roboto Slab', serif;
       }
+
       [un-cloak] {
         display: none;
       }
@@ -25,12 +27,14 @@
       window.__unocss = {
         shortcuts: {
           textarea: 'block w-full',
-          code: 'bg-gray-200 text-gray-700 border border-solid border-gray-300 rounded px-1 text-xs',
+          code: 'bg-blue-200 text-gray-700 border border-solid border-blue-300 rounded px-1 text-xs',
+          kbd: 'bg-gray-100 text-gray-700 border border-solid border-gray-300 rounded px-1 text-xs',
         },
       };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
   </head>
+
   <body>
     <div id="app" class="max-w-screen-md mx-auto px-2" un-cloak>
       <h1 class="text-xl mb-2 text-center">
@@ -45,36 +49,71 @@
       <textarea class="mb-2 textarea h-[10em]" v-model="shortcuts"></textarea>
       <div class="mb-2 text-gray-600">
         Current sequence:
-        <span class="text-green-600" v-text="sequence || 'empty'"></span>
+        <span class="text-blue-400" v-text="sequence || 'empty'"></span>
       </div>
       <div class="mb-2 text-center text-gray-600">
         <div v-if="keyTriggered">
           You just triggered
-          <span class="text-orange-600" v-text="keyTriggered"></span>!
+          <span class="text-blue-600" v-text="keyTriggered"></span>!
         </div>
         <div v-else>Press a key and see how it is represented.</div>
       </div>
+      <div class="mb-2 text-sm text-gray-600">
+        Note:
+        <ul class="mt-0">
+          <li>
+            <kbd class="kbd">Alt</kbd>/<kbd class="kbd">Opt</kbd>/<kbd
+              class="kbd"
+              >Shift</kbd
+            >
+            do not work in case-sensitive mode.
+          </li>
+          <li>
+            Some keys might not work because they are occupied by the browser.
+          </li>
+        </ul>
+      </div>
       <div class="grid grid-cols-2 grid-gap-2">
+        <div class="p-2 border border-solid border-gray-400">
+          <div>Case Insensitive:</div>
+          <ul>
+            <li v-if="keyExpCI">
+              <span v-text="keyExpCI"></span> (<code class="code"
+                >event.key</code
+              >)
+            </li>
+            <li v-if="keyExpCICode">
+              <span v-text="keyExpCICode"></span> (<code class="code"
+                >event.code</code
+              >)
+            </li>
+          </ul>
+        </div>
         <div class="p-2 border border-solid border-gray-400">
           <div>Case Sensitive:</div>
           <ul>
             <li v-if="keyExpCS"><span v-text="keyExpCS"></span></li>
           </ul>
         </div>
-        <div class="p-2 border border-solid border-gray-400">
-          <div>Case Insensitive:</div>
-          <ul>
-            <li v-if="keyExpCICode">
-              <span v-text="keyExpCICode"></span> (<code class="code"
-                >event.code</code
-              >)
-            </li>
-            <li v-if="keyExpCI">
-              <span v-text="keyExpCI"></span> (<code class="code"
-                >event.key</code
-              >)
-            </li>
-          </ul>
+        <div>
+          <pre
+            v-if="keyExpCICode"
+            class="m-0 p-2 border border-solid border-blue-400 bg-blue-100"
+          >
+VM.shortcut.register({{ JSON.stringify(keyExpCI) }}, callback);
+</pre
+          >
+        </div>
+        <div>
+          <pre
+            v-if="keyExpCS"
+            class="m-0 p-2 border border-solid border-blue-400 bg-blue-100"
+          >
+VM.shortcut.register({{ JSON.stringify(keyExpCS) }}, callback, {
+  caseSensitive: true,
+});
+</pre
+          >
         </div>
       </div>
     </div>
