@@ -15,8 +15,9 @@
     "clean": "del-cli dist types",
     "build:js": "cross-env NODE_ENV=production rollup -c",
     "build:types": "tsc -p tsconfig.prod.json",
-    "build": "run-s ci clean build:types build:js",
-    "build:docs": "typedoc src/index.ts"
+    "build": "run-s ci clean build:*",
+    "demo:cp": "cp src/demo/* dist",
+    "demo": "run-s build:js demo:cp"
   },
   "unpkg": "dist/index.js",
   "jsdelivr": "dist/index.js",
@@ -47,8 +48,7 @@
     "@typescript-eslint/parser": "^6.7.0",
     "del-cli": "^5.1.0",
     "husky": "^8.0.3",
-    "jest-environment-jsdom": "^29.7.0",
-    "typedoc": "^0.25.1"
+    "jest-environment-jsdom": "^29.7.0"
   },
   "jest": {
     "testEnvironment": "jsdom"
