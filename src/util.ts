@@ -89,10 +89,3 @@ export function reprShortcut(input: string | string[], caseSensitive = false) {
     .map((key) => reprKey(key))
     .join(' ');
 }
-
-/**
- * Get the original character from `event.code` for keys that can be modified by `Alt/Shift`.
- */
-export function getOriginalKey(e: KeyboardEvent) {
-  return /^(?:Digit|Key)\w$/.test(e.code) ? e.code[e.code.length - 1] : e.key;
-}

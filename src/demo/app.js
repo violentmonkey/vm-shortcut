@@ -72,7 +72,7 @@ ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight B 
             .replace(/^i:/, '');
           keyExpCI.value = VM.shortcut
             .buildKey({
-              base: VM.shortcut.getOriginalKey(e),
+              base: e.key,
               modifierState: {
                 c: e.ctrlKey,
                 s: e.shiftKey,

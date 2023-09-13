@@ -6,12 +6,7 @@ import {
   IShortcutOptions,
   IShortcutServiceOptions,
 } from './types';
-import {
-  normalizeSequence,
-  parseCondition,
-  getOriginalKey,
-  buildKey,
-} from './util';
+import { normalizeSequence, parseCondition, buildKey } from './util';
 import { addKeyNode, createKeyNode, getKeyNode, removeKeyNode } from './node';
 import { modifiers } from './constants';
 import { Subject } from './subject';
@@ -223,9 +218,11 @@ export class KeyboardService {
         },
         caseSensitive: false,
       }),
-      // case insensitive mode, using `e.code` for keys that can be modified by `Alt/Shift`, otherwise `e.key`
+      // case insensitive mode, using `e.key` with modifiers
       buildKey({
-        base: getOriginalKey(e),
+        // Note: `e.key` might be different from what you expect because of Alt Graph
+        // ref: https://en.wikipedia.org/wiki/AltGr_key
+        base: e.key,
         modifierState: {
           c: e.ctrlKey,
           s: e.shiftKey,
