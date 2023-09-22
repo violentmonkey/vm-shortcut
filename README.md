@@ -8,6 +8,8 @@ Register a shortcut for a function.
 
 This is a helper script for Violentmonkey.
 
+👉 Playground: https://violentmonkey.github.io/vm-shortcut/
+
 ## Usage
 
 ### Importing
