@@ -1,4 +1,4 @@
-const isMacintosh = navigator.userAgent.includes('Macintosh');
+export const isMacintosh = navigator.userAgent.includes('Macintosh');
 
 export const modifierList = ['m', 'c', 's', 'a'] as const;
 
