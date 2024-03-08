@@ -157,7 +157,7 @@ export class KeyboardService {
     }
   }
 
-  handleKeyOnce(keyExps: string[], fromRoot: boolean): boolean {
+  private _handleKeyOnce(keyExps: string[], fromRoot: boolean): 0 | 1 | 2 {
     let cur: IKeyNode | undefined = this._cur;
     if (fromRoot || !cur) {
       // set fromRoot to true to avoid another retry
@@ -180,7 +180,7 @@ export class KeyboardService {
     if (!fromRoot && !shortcut && !cur?.children.size) {
       // Nothing is matched with the last key, rematch from root
       this._reset();
-      return this.handleKeyOnce(keyExps, true);
+      return this._handleKeyOnce(keyExps, true);
     }
     if (shortcut) {
       try {
@@ -188,9 +188,9 @@ export class KeyboardService {
       } catch {
         // ignore
       }
-      return true;
+      return 2;
     }
-    return false;
+    return this._cur ? 1 : 0;
   }
 
   handleKey = (e: KeyboardEvent) => {
@@ -232,7 +232,7 @@ export class KeyboardService {
         caseSensitive: false,
       }),
     ];
-    if (this.handleKeyOnce(keyExps, false)) {
+    if (this._handleKeyOnce(keyExps, false)) {
       e.preventDefault();
       this._reset();
     }
