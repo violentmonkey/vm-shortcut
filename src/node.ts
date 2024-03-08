@@ -48,7 +48,7 @@ export function removeKeyNode(
   if (shortcut) node.shortcuts.delete(shortcut);
   else node.shortcuts.clear();
   let i = ancestors.length - 1;
-  while (i > 1) {
+  while (i > 0) {
     node = ancestors[i];
     if (node.shortcuts.size || node.children.size) break;
     const last = ancestors[i - 1];
