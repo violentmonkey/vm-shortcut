@@ -8,11 +8,11 @@ export function createKeyNode(): IKeyNode {
 }
 
 export function addKeyNode(
-  parent: IKeyNode,
+  root: IKeyNode,
   sequence: string[],
   shortcut: IShortcut,
 ) {
-  let node: IKeyNode = parent;
+  let node: IKeyNode = root;
   for (const key of sequence) {
     let child = node.children.get(key);
     if (!child) {
@@ -24,8 +24,8 @@ export function addKeyNode(
   node.shortcuts.add(shortcut);
 }
 
-export function getKeyNode(parent: IKeyNode, sequence: string[]) {
-  let node: IKeyNode | undefined = parent;
+export function getKeyNode(root: IKeyNode, sequence: string[]) {
+  let node: IKeyNode | undefined = root;
   for (const key of sequence) {
     node = node.children.get(key);
     if (!node) break;
@@ -34,11 +34,11 @@ export function getKeyNode(parent: IKeyNode, sequence: string[]) {
 }
 
 export function removeKeyNode(
-  parent: IKeyNode,
+  root: IKeyNode,
   sequence: string[],
   shortcut?: IShortcut,
 ) {
-  let node: IKeyNode | undefined = parent;
+  let node: IKeyNode | undefined = root;
   const ancestors = [node];
   for (const key of sequence) {
     node = node.children.get(key);
@@ -55,4 +55,22 @@ export function removeKeyNode(
     last.children.delete(sequence[i - 1]);
     i -= 1;
   }
+}
+
+export function reprNodeTree(root: IKeyNode) {
+  const result: string[] = [];
+  const reprChildren = (node: IKeyNode, level = 0) => {
+    for (const [key, child] of node.children.entries()) {
+      result.push(
+        [
+          '  '.repeat(level),
+          key,
+          child.shortcuts.size ? ` (${child.shortcuts.size})` : '',
+        ].join(''),
+      );
+      reprChildren(child, level + 1);
+    }
+  };
+  reprChildren(root);
+  return result.join('\n');
 }

@@ -1,3 +1,12 @@
+import { modifiers } from './constants';
+import {
+  addKeyNode,
+  createKeyNode,
+  getKeyNode,
+  removeKeyNode,
+  reprNodeTree,
+} from './node';
+import { Subject } from './subject';
 import {
   IKeyNode,
   IShortcut,
@@ -6,10 +15,7 @@ import {
   IShortcutOptions,
   IShortcutServiceOptions,
 } from './types';
-import { normalizeSequence, parseCondition, buildKey } from './util';
-import { addKeyNode, createKeyNode, getKeyNode, removeKeyNode } from './node';
-import { modifiers } from './constants';
-import { Subject } from './subject';
+import { buildKey, normalizeSequence, parseCondition } from './util';
 
 export * from './constants';
 export * from './types';
@@ -238,6 +244,10 @@ export class KeyboardService {
     }
     this._timer = window.setTimeout(this._reset, this.options.sequenceTimeout);
   };
+
+  repr() {
+    return reprNodeTree(this._root);
+  }
 }
 
 let service: KeyboardService;
