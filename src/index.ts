@@ -238,9 +238,10 @@ export class KeyboardService {
         caseSensitive: false,
       }),
     ];
-    if (this._handleKeyOnce(keyExps, false)) {
+    const state = this._handleKeyOnce(keyExps, false);
+    if (state) {
       e.preventDefault();
-      this._reset();
+      if (state === 2) this._reset();
     }
     this._timer = window.setTimeout(this._reset, this.options.sequenceTimeout);
   };
