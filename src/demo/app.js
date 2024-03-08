@@ -14,6 +14,13 @@ ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight B 
     const caseSensitive = ref(false);
     let disposeList = [];
 
+    const onFocus = () => {
+      VM.shortcut.getService().setContext('input', true);
+    };
+    const onBlur = () => {
+      VM.shortcut.getService().setContext('input', false);
+    };
+
     watch(
       [shortcuts, caseSensitive],
       () => {
@@ -33,6 +40,7 @@ ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight B 
               },
               {
                 caseSensitive: caseSensitive.value,
+                condition: '!input',
               },
             );
           });
@@ -88,6 +96,7 @@ ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight B 
     });
 
     return {
+      version: VM.shortcut.version,
       shortcuts,
       sequence,
       keyTriggered,
@@ -95,6 +104,8 @@ ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight B 
       keyExpCI,
       keyExpCICode,
       caseSensitive,
+      onFocus,
+      onBlur,
     };
   },
 }).mount('#app');
