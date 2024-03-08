@@ -5,7 +5,7 @@
   "author": "Gerald <gera2ld@live.com>",
   "license": "ISC",
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky || true",
     "dev": "rollup -wc",
     "prepublishOnly": "run-s build",
     "lint": "eslint --ext .ts,.tsx . && prettier -c --ignore-path=.eslintignore .",
@@ -13,7 +13,7 @@
     "test": "jest",
     "ci": "run-s lint test",
     "clean": "del-cli dist types",
-    "build:js": "cross-env NODE_ENV=production rollup -c",
+    "build:js": "NODE_ENV=production rollup -c",
     "build:types": "tsc -p tsconfig.prod.json",
     "build": "run-s ci clean build:*",
     "demo:cp": "cp src/demo/* dist",
@@ -39,15 +39,14 @@
   ],
   "typings": "types/index.d.ts",
   "dependencies": {
-    "@babel/runtime": "^7.22.15"
+    "@babel/runtime": "^7.24.0"
   },
   "devDependencies": {
-    "@gera2ld/plaid": "~2.6.0",
-    "@gera2ld/plaid-rollup": "~2.6.0",
+    "@gera2ld/plaid": "~2.7.0",
+    "@gera2ld/plaid-rollup": "~2.7.0",
     "@gera2ld/plaid-test": "~2.6.0",
-    "@typescript-eslint/parser": "^6.7.0",
     "del-cli": "^5.1.0",
-    "husky": "^8.0.3",
+    "husky": "^9.0.11",
     "jest-environment-jsdom": "^29.7.0"
   },
   "jest": {

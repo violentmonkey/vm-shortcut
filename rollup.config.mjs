@@ -1,64 +1,48 @@
-import plaid from '@gera2ld/plaid';
+import { defineExternal, definePlugins } from '@gera2ld/plaid-rollup';
+import { defineConfig } from 'rollup';
 import pkg from './package.json' assert { type: 'json' };
 
-const {
-  defaultOptions,
-  getRollupExternal,
-  getRollupPlugins,
-} = plaid;
+const banner = `/*! ${pkg.name} v${pkg.version} | ${pkg.license} License */`;
 
-const DIST = defaultOptions.distDir;
-const BANNER = `/*! ${pkg.name} v${pkg.version} | ${pkg.license} License */`;
-
-const external = getRollupExternal();
 const bundleOptions = {
   extend: true,
   esModule: false,
 };
-const rollupConfig = [
+
+export default defineConfig([
   {
     input: 'src/index.ts',
-    plugins: getRollupPlugins({
+    plugins: definePlugins({
       esm: true,
       minimize: false,
       replaceValues: {
         'process.env.VM': false,
+        'process.env.VERSION': JSON.stringify(pkg.version),
       },
     }),
-    external,
+    external: defineExternal(Object.keys(pkg.dependencies)),
     output: {
       format: 'esm',
-      file: `${DIST}/index.mjs`,
+      file: `dist/index.mjs`,
+      banner,
     },
   },
   {
     input: 'src/index.ts',
-    plugins: getRollupPlugins({
+    plugins: definePlugins({
       esm: true,
       minimize: false,
       replaceValues: {
         'process.env.VM': true,
+        'process.env.VERSION': JSON.stringify(pkg.version),
       },
     }),
     output: {
       format: 'iife',
-      file: `${DIST}/index.js`,
+      file: `dist/index.js`,
       name: 'VM.shortcut',
+      banner,
       ...bundleOptions,
     },
   },
-];
-
-rollupConfig.forEach((item) => {
-  item.output = {
-    indent: false,
-    // If set to false, circular dependencies and live bindings for external imports won't work
-    externalLiveBindings: false,
-    ...item.output,
-    ...BANNER && {
-      banner: BANNER,
-    },
-  };
-});
-
-export default rollupConfig;
+]);
