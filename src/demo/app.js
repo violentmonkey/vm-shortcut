@@ -1,4 +1,5 @@
-const { createApp, nextTick, ref, watch, onMounted } = Vue;
+import { createApp, nextTick, ref, watch, onMounted } from 'vue';
+
 createApp({
   setup() {
     const shortcuts = ref(`\
@@ -97,6 +98,7 @@ ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight B 
 
     return {
       version: VM.shortcut.version,
+      commit: process.env.COMMIT,
       shortcuts,
       sequence,
       keyTriggered,

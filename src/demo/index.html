@@ -43,7 +43,14 @@
   <body>
     <div id="app" class="max-w-screen-lg mx-auto px-2" un-cloak>
       <h1 class="text-center"><em>@violentmonkey/shortcut</em> Playground</h1>
-      <p class="text-right text-gray-400 text-sm">Version: {{version}}</p>
+      <p class="text-right text-gray-400 text-sm">
+        Version: {{version}}
+        <a
+          class="text-blue-400"
+          :href="`https://github.com/violentmonkey/vm-shortcut/commit/${commit}`"
+          v-text="commit"
+        ></a>
+      </p>
       <h2>Triggering a Shortcut</h2>
       <div class="flex mb-2">
         <div class="flex-1">

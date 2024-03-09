@@ -16,8 +16,10 @@
     "build:js": "NODE_ENV=production rollup -c",
     "build:types": "tsc -p tsconfig.prod.json",
     "build": "run-s ci clean build:*",
-    "demo:cp": "cp src/demo/* dist",
-    "demo": "run-s build:js demo:cp"
+    "demo:dev": "DEMO=1 run-s demo:cp dev",
+    "demo:build": "DEMO=1 run-s build",
+    "demo:cp": "cp src/demo/index.html dist",
+    "demo": "run-s demo:build demo:cp"
   },
   "unpkg": "dist/index.js",
   "jsdelivr": "dist/index.js",
@@ -47,7 +49,8 @@
     "@gera2ld/plaid-test": "~2.6.0",
     "del-cli": "^5.1.0",
     "husky": "^9.0.11",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "vue": "^3.4.21"
   },
   "jest": {
     "testEnvironment": "jsdom"
