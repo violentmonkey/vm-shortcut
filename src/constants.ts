@@ -19,6 +19,7 @@ export const modifierAliases: Record<string, IModifier> = {
   s: 's',
   a: 'a',
   m: 'm',
+  cm: isMacintosh ? 'm' : 'c',
   ctrlcmd: isMacintosh ? 'm' : 'c',
 };
 
