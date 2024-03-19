@@ -148,7 +148,7 @@ Possible modifiers are:
 - `s`, `shift`
 - `a`, `alt`
 - `m`, `meta`, `cmd`
-- `ctrlcmd`
+- `cm`, `ctrlcmd`
 
 There is one special case, `ctrlcmd` for `ctrl` on Windows and `cmd` for macOS, so if we register `ctrlcmd-s` to save something, the callback will be called when `ctrl-s` is pressed on Windows, and when `cmd-s` is pressed on macOS. This is useful to register cross-platform shortcuts.
 
