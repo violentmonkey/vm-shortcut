@@ -3,10 +3,10 @@
   "compilerOptions": {
     "declaration": true,
     "emitDeclarationOnly": true,
-    "outDir": "types"
+    "outDir": "dist"
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/index.ts",
+    "src/shim.d.ts"
   ]
 }

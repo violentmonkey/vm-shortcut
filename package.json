@@ -4,25 +4,24 @@
   "description": "Register a shortcut for a function",
   "author": "Gerald <gera2ld@live.com>",
   "license": "ISC",
+  "type": "module",
   "scripts": {
     "prepare": "husky || true",
-    "dev": "rollup -wc",
-    "prepublishOnly": "run-s build",
-    "lint": "eslint --ext .ts,.tsx . && prettier -c --ignore-path=.eslintignore .",
-    "lint:fix": "eslint --ext .ts,.tsx . --fix && prettier -c --ignore-path=.eslintignore . -w",
-    "test": "jest",
-    "ci": "run-s lint test",
-    "clean": "del-cli dist types",
-    "build:js": "NODE_ENV=production rollup -c",
+    "dev": "vite",
+    "prepublishOnly": "pnpm build",
+    "lint": "eslint",
+    "test": "vitest --run",
+    "clean": "del-cli dist",
+    "build:js": "vite build --mode iife && vite build --mode es",
     "build:types": "tsc -p tsconfig.prod.json",
-    "build": "run-s ci clean build:*",
-    "demo:dev": "DEMO=1 run-s demo:cp dev",
-    "demo:build": "DEMO=1 run-s build",
-    "demo:cp": "cp src/demo/index.html dist",
-    "demo": "run-s demo:build demo:cp"
+    "build": "pnpm lint && pnpm test && pnpm clean && pnpm /^build:/",
+    "demo:dev": "vite --config vite.config.ts --mode demo",
+    "demo:build": "vite build --mode demo",
+    "demo:cp": "cp src/demo/index.html dist/index.iife.js dist/demo",
+    "demo": "pnpm build && pnpm demo:build && pnpm demo:cp"
   },
-  "unpkg": "dist/index.js",
-  "jsdelivr": "dist/index.js",
+  "unpkg": "dist/index.iife.js",
+  "jsdelivr": "dist/index.iife.js",
   "repository": "git@github.com:violentmonkey/vm-shortcut.git",
   "nyc": {
     "include": [
@@ -33,26 +32,24 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/index.iife.js",
+  "module": "dist/index.js",
   "files": [
-    "dist",
-    "types"
+    "dist"
   ],
-  "typings": "types/index.d.ts",
-  "dependencies": {
-    "@babel/runtime": "^7.24.0"
-  },
+  "typings": "dist/index.d.ts",
   "devDependencies": {
-    "@gera2ld/plaid": "~2.7.0",
-    "@gera2ld/plaid-rollup": "~2.7.0",
-    "@gera2ld/plaid-test": "~2.6.0",
-    "del-cli": "^5.1.0",
-    "husky": "^9.0.11",
-    "jest-environment-jsdom": "^29.7.0",
-    "vue": "^3.4.21"
-  },
-  "jest": {
-    "testEnvironment": "jsdom"
+    "@eslint/js": "^9.39.2",
+    "del-cli": "^7.0.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.0.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.51.0",
+    "vite": "^7.3.0",
+    "vitest": "^4.0.16",
+    "vue": "^3.5.26"
   }
 }

@@ -1,5 +1,6 @@
-import { addKeyNode, createKeyNode, removeKeyNode } from '../src/node';
-import { IKeyNode } from '../src/types';
+import { describe, expect, test } from 'vitest';
+import { addKeyNode, createKeyNode, removeKeyNode } from './node';
+import { IKeyNode } from './types';
 
 type ISerializedNode = [number, Array<[string, ISerializedNode]>];
 

@@ -10,18 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
         with:
-          node-version: '20'
-      - uses: pnpm/action-setup@v2
+          version: 10
+          run_install: false
+
+      - uses: actions/setup-node@v4
         with:
-          version: 8
+          node-version: '25'
+          cache: 'pnpm'
+
       - name: Build
         run: pnpm i && pnpm demo
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist
+          folder: dist/demo
           branch: gh-pages
           single-commit: true

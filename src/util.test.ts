@@ -1,4 +1,5 @@
-import { buildKey, parseKey, parseCondition, reprShortcut } from '../src/util';
+import { expect, it } from 'vitest';
+import { buildKey, parseCondition, parseKey, reprShortcut } from './util';
 
 it('buildKey', () => {
   expect(

@@ -98,7 +98,7 @@ ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight B 
 
     return {
       version: VM.shortcut.version,
-      commit: process.env.COMMIT,
+      commit: __COMMIT__,
       shortcuts,
       sequence,
       keyTriggered,

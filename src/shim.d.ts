@@ -19,3 +19,7 @@ declare module '*.css' {
   const css: string;
   export default css;
 }
+
+declare const VM: any;
+declare const __VERSION__: string;
+declare const __COMMIT__: string;

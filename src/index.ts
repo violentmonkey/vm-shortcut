@@ -17,7 +17,7 @@ import {
 } from './types';
 import { buildKey, normalizeSequence, parseCondition } from './util';
 
-export const version = process.env.VERSION;
+export const version = __VERSION__;
 export * from './constants';
 export * from './types';
 export * from './util';
