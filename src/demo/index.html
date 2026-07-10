@@ -4,89 +4,69 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@violentmonkey/shortcut Playground</title>
-    <style>
-      [un-cloak] {
-        display: none;
-      }
+    <style>[v-cloak] { display: none; }</style>
+    <style type="text/tailwindcss">
+      .kbd { @apply inline-block px-1.5 py-0.5 text-xs font-mono bg-gray-100 border border-gray-300 rounded shadow-sm; }
+      .code { @apply inline-block px-1.5 py-0.5 text-xs font-mono bg-blue-100 border border-blue-200 rounded; }
+      .pre { @apply m-0 p-3 rounded-md border border-blue-200 bg-blue-50 text-sm font-mono overflow-auto; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
-    <script>
-      window.__unocss = {
-        shortcuts: {
-          textarea: 'block w-full',
-          code: 'bg-blue-200 text-gray-700 border border-solid border-blue-300 rounded px-1 text-xs',
-          kbd: 'bg-gray-100 text-gray-700 border border-solid border-gray-300 rounded px-1 text-xs',
-        },
-      };
-      window.__jslib = {
-        githubCorner: {
-          url: 'https://github.com/violentmonkey/vm-shortcut',
-          color: 'blue',
-        },
-        webFont: true,
-      };
-    </script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/gh/gera2ld/js-lib@dist/unocss.js"
-    ></script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/gh/gera2ld/js-lib@dist/github-corner.js"
-    ></script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/gh/gera2ld/js-lib@dist/web-font.js"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@uiw/github-corners@1.5.16/lib/index.js"></script>
   </head>
 
-  <body>
-    <div id="app" class="max-w-screen-lg mx-auto px-2" un-cloak>
-      <h1 class="text-center"><em>@violentmonkey/shortcut</em> Playground</h1>
-      <p class="text-right text-gray-400 text-sm">
+  <body class="bg-gray-50 text-gray-900 antialiased font-sans">
+    <github-corners
+      fixed
+      href="https://github.com/violentmonkey/vm-shortcut"
+    ></github-corners>
+    <div id="app" class="max-w-screen-lg mx-auto px-4 py-8" v-cloak>
+      <h1 class="text-3xl font-bold text-center mb-1"><em>@violentmonkey/shortcut</em> Playground</h1>
+      <p class="text-right text-gray-400 text-sm mb-8">
         Version: {{version}}
         <a
-          class="text-blue-400"
+          class="text-blue-400 hover:text-blue-600"
           :href="`https://github.com/violentmonkey/vm-shortcut/commit/${commit}`"
           v-text="commit"
         ></a>
       </p>
-      <h2>Triggering a Shortcut</h2>
-      <div class="flex mb-2">
-        <div class="flex-1">
+      <h2 class="text-xl font-semibold mb-3">Triggering a Shortcut</h2>
+      <div class="flex items-center mb-2">
+        <div class="flex-1 text-gray-600">
           Declare your shortcuts here: (one sequence in a line)
         </div>
-        <label>
-          <input type="checkbox" v-model="caseSensitive" /> Case sensitive
+        <label class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer">
+          <input type="checkbox" v-model="caseSensitive" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" /> Case sensitive
         </label>
       </div>
       <textarea
-        class="mb-2 textarea h-[10em]"
+        class="mb-3 block w-full h-[10em] rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none font-mono"
         v-model="shortcuts"
         @focus="onFocus"
         @blur="onBlur"
       ></textarea>
       <div class="mb-2 text-gray-600">
         Current sequence:
-        <span class="text-blue-400" v-text="sequence || 'empty'"></span>
+        <span class="font-mono text-blue-500 font-medium" v-text="sequence || 'empty'"></span>
       </div>
-      <div class="mb-2 text-center text-gray-600">
-        <div v-if="keyTriggered">
+      <div class="mb-6 text-center text-gray-600">
+        <div v-if="keyTriggered" class="inline-block rounded-full bg-green-50 px-4 py-1.5 text-green-700">
           You just triggered
-          <span class="text-blue-600" v-text="keyTriggered"></span>!
+          <span class="font-semibold" v-text="keyTriggered"></span>!
         </div>
         <div v-else>Try to trigger a shortcut sequence declared above.</div>
       </div>
-      <h2 class="mt-12">Inspecting a Key</h2>
-      <div class="mb-2">Press a key to see how it is represented.</div>
-      <div class="mb-2 text-sm text-gray-600">
-        <p>Note:</p>
-        <ul>
+      <h2 class="text-xl font-semibold mb-3 mt-8">Inspecting a Key</h2>
+      <div class="mb-2 text-gray-600">Press a key to see how it is represented.</div>
+      <div class="mb-4 text-sm text-gray-500">
+        <p class="mb-1">Note:</p>
+        <ul class="list-disc pl-5 space-y-1">
           <li>
-            <kbd class="kbd">Alt</kbd>/<kbd class="kbd">Opt</kbd>/<kbd
-              class="kbd"
-              >Shift</kbd
-            >
+            <kbd class="kbd">Alt</kbd>/<kbd class="kbd">Opt</kbd>/<kbd class="kbd">Shift</kbd>
             do not work in case-sensitive mode.
           </li>
           <li>
@@ -94,49 +74,35 @@
           </li>
         </ul>
       </div>
-      <div class="grid grid-cols-2 grid-gap-2">
-        <div class="p-2 border border-solid border-gray-400">
-          <div>Case Insensitive:</div>
-          <ul>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div class="font-medium mb-2">Case Insensitive:</div>
+          <ul class="space-y-1 text-sm">
             <li v-if="keyExpCI">
-              <span v-text="keyExpCI"></span> (<code class="code"
-                >event.key</code
-              >)
+              <span v-text="keyExpCI"></span> (<code class="code">event.key</code>)
             </li>
             <li v-if="keyExpCICode">
-              <span v-text="keyExpCICode"></span> (<code class="code"
-                >event.code</code
-              >)
+              <span v-text="keyExpCICode"></span> (<code class="code">event.code</code>)
             </li>
           </ul>
         </div>
-        <div class="p-2 border border-solid border-gray-400">
-          <div>Case Sensitive:</div>
-          <ul>
+        <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div class="font-medium mb-2">Case Sensitive:</div>
+          <ul class="space-y-1 text-sm">
             <li v-if="keyExpCS"><span v-text="keyExpCS"></span></li>
           </ul>
         </div>
         <div>
-          <pre
-            v-if="keyExpCICode"
-            class="m-0 p-2 border border-solid border-blue-400 bg-blue-100"
-          >
+          <pre v-if="keyExpCICode" class="pre">
 VM.shortcut.register({{ JSON.stringify(keyExpCI) }}, callback);
 // or
-VM.shortcut.register({{ JSON.stringify(keyExpCICode) }}, callback);
-</pre
-          >
+VM.shortcut.register({{ JSON.stringify(keyExpCICode) }}, callback);</pre>
         </div>
         <div>
-          <pre
-            v-if="keyExpCS"
-            class="m-0 p-2 border border-solid border-blue-400 bg-blue-100"
-          >
+          <pre v-if="keyExpCS" class="pre">
 VM.shortcut.register({{ JSON.stringify(keyExpCS) }}, callback, {
   caseSensitive: true,
-});
-</pre
-          >
+});</pre>
         </div>
       </div>
     </div>
