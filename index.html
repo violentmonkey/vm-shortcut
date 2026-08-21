@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@violentmonkey/shortcut Playground</title>
+    <style>
+      [v-cloak] {
+        display: none;
+      }
+    </style>
+    <style type="text/tailwindcss">
+      .kbd {
+        @apply inline-block px-1.5 py-0.5 text-xs font-mono bg-gray-100 border border-gray-300 rounded shadow-sm;
+      }
+      .code {
+        @apply inline-block px-1.5 py-0.5 text-xs font-mono bg-blue-100 border border-blue-200 rounded;
+      }
+      .pre {
+        @apply m-0 p-3 rounded-md border border-blue-200 bg-blue-50 text-sm font-mono overflow-auto;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@uiw/github-corners@1.5.16/lib/index.js"
+    ></script>
+  </head>
+
+  <body class="bg-gray-50 text-gray-900 antialiased font-sans">
+    <github-corners
+      fixed
+      href="https://github.com/violentmonkey/vm-shortcut"
+    ></github-corners>
+    <div id="app" class="max-w-screen-lg mx-auto px-4 py-8" v-cloak>
+      <h1 class="text-3xl font-bold text-center mb-1">
+        <em>@violentmonkey/shortcut</em> Playground
+      </h1>
+      <p class="text-right text-gray-400 text-sm mb-8">
+        Version: {{version}}
+        <a
+          class="text-blue-400 hover:text-blue-600"
+          :href="`https://github.com/violentmonkey/vm-shortcut/commit/${commit}`"
+          v-text="commit"
+        ></a>
+      </p>
+      <h2 class="text-xl font-semibold mb-3">Triggering a Shortcut</h2>
+      <div class="flex items-center mb-2">
+        <div class="flex-1 text-gray-600">
+          Declare your shortcuts here: (one sequence in a line)
+        </div>
+        <label
+          class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer"
+        >
+          <input
+            type="checkbox"
+            v-model="caseSensitive"
+            class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          Case sensitive
+        </label>
+      </div>
+      <textarea
+        class="mb-3 block w-full h-[10em] rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none font-mono"
+        v-model="shortcuts"
+        @focus="onFocus"
+        @blur="onBlur"
+      ></textarea>
+      <div class="mb-2 text-gray-600">
+        Current sequence:
+        <span
+          class="font-mono text-blue-500 font-medium"
+          v-text="sequence || 'empty'"
+        ></span>
+      </div>
+      <div class="mb-6 text-center text-gray-600">
+        <div
+          v-if="keyTriggered"
+          class="inline-block rounded-full bg-green-50 px-4 py-1.5 text-green-700"
+        >
+          You just triggered
+          <span class="font-semibold" v-text="keyTriggered"></span>!
+        </div>
+        <div v-else>Try to trigger a shortcut sequence declared above.</div>
+      </div>
+      <h2 class="text-xl font-semibold mb-3 mt-8">Inspecting a Key</h2>
+      <div class="mb-2 text-gray-600">
+        Press a key to see how it is represented.
+      </div>
+      <div class="mb-4 text-sm text-gray-500">
+        <p class="mb-1">Note:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>
+            <kbd class="kbd">Alt</kbd>/<kbd class="kbd">Opt</kbd>/<kbd
+              class="kbd"
+              >Shift</kbd
+            >
+            do not work in case-sensitive mode.
+          </li>
+          <li>
+            Some keys might not work because they are occupied by the browser.
+          </li>
+        </ul>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div class="font-medium mb-2">Case Insensitive:</div>
+          <ul class="space-y-1 text-sm">
+            <li v-if="keyExpCI">
+              <span v-text="keyExpCI"></span> (<code class="code"
+                >event.key</code
+              >)
+            </li>
+            <li v-if="keyExpCICode">
+              <span v-text="keyExpCICode"></span> (<code class="code"
+                >event.code</code
+              >)
+            </li>
+          </ul>
+        </div>
+        <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div class="font-medium mb-2">Case Sensitive:</div>
+          <ul class="space-y-1 text-sm">
+            <li v-if="keyExpCS"><span v-text="keyExpCS"></span></li>
+          </ul>
+        </div>
+        <div>
+          <pre v-if="keyExpCICode" class="pre">
+VM.shortcut.register({{ JSON.stringify(keyExpCI) }}, callback);
+// or
+VM.shortcut.register({{ JSON.stringify(keyExpCICode) }}, callback);</pre>
+        </div>
+        <div>
+          <pre v-if="keyExpCS" class="pre">
+VM.shortcut.register({{ JSON.stringify(keyExpCS) }}, callback, {
+  caseSensitive: true,
+});</pre>
+        </div>
+      </div>
+    </div>
+    <script src="index.iife.js"></script>
+    <script>
+      const { createApp, nextTick, ref, watch, onMounted } = Vue;
+
+      createApp({
+        setup() {
+          const shortcuts = ref(`\
+g g
+c-a c-b
+a-a a-b
+ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight B A`);
+          const keyExpCS = ref('');
+          const keyExpCI = ref('');
+          const keyExpCICode = ref('');
+          const keyTriggered = ref('');
+          const sequence = ref('');
+          const caseSensitive = ref(false);
+          let disposeList = [];
+
+          const onFocus = () => {
+            VM.shortcut.getService().setContext('input', true);
+          };
+          const onBlur = () => {
+            VM.shortcut.getService().setContext('input', false);
+          };
+
+          watch(
+            [shortcuts, caseSensitive],
+            () => {
+              disposeList.forEach((dispose) => dispose());
+              disposeList = shortcuts.value
+                .split('\n')
+                .map((row) => row.trim())
+                .filter(Boolean)
+                .map((key) => {
+                  console.log('register', key, caseSensitive.value);
+                  return VM.shortcut.register(
+                    key,
+                    () => {
+                      nextTick(() => {
+                        keyTriggered.value = key;
+                      });
+                    },
+                    {
+                      caseSensitive: caseSensitive.value,
+                      condition: '!input',
+                    },
+                  );
+                });
+            },
+            { immediate: true },
+          );
+          watch(sequence, () => {
+            keyTriggered.value = '';
+          });
+
+          onMounted(() => {
+            VM.shortcut.disable();
+            VM.shortcut.getService().sequence.subscribe((seq) => {
+              sequence.value = seq.join(' ');
+            });
+            window.addEventListener('keydown', (e) => {
+              if (!VM.shortcut.modifiers[e.key.toLowerCase()]) {
+                keyExpCS.value = VM.shortcut.buildKey({
+                  base: e.key,
+                  modifierState: {
+                    c: e.ctrlKey,
+                    m: e.metaKey,
+                  },
+                  caseSensitive: true,
+                });
+                keyExpCICode.value = VM.shortcut
+                  .buildKey({
+                    base: e.code,
+                    modifierState: {
+                      c: e.ctrlKey,
+                      s: e.shiftKey,
+                      a: e.altKey,
+                      m: e.metaKey,
+                    },
+                    caseSensitive: false,
+                  })
+                  .replace(/^i:/, '');
+                keyExpCI.value = VM.shortcut
+                  .buildKey({
+                    base: e.key,
+                    modifierState: {
+                      c: e.ctrlKey,
+                      s: e.shiftKey,
+                      a: e.altKey,
+                      m: e.metaKey,
+                    },
+                    caseSensitive: false,
+                  })
+                  .replace(/^i:/, '');
+              }
+              VM.shortcut.handleKey(e);
+            });
+          });
+
+          return {
+            version: VM.shortcut.version,
+            commit: "884584f",
+            shortcuts,
+            sequence,
+            keyTriggered,
+            keyExpCS,
+            keyExpCI,
+            keyExpCICode,
+            caseSensitive,
+            onFocus,
+            onBlur,
+          };
+        },
+      }).mount('#app');
+    </script>
+  </body>
+</html>
