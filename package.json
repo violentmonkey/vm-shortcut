@@ -15,10 +15,7 @@
     "build:js": "vite build --mode iife && vite build --mode es",
     "build:types": "tsc -p tsconfig.prod.json",
     "build": "pnpm lint && pnpm test && pnpm clean && pnpm /^build:/",
-    "demo:dev": "vite --config vite.config.ts --mode demo",
-    "demo:build": "vite build --mode demo",
-    "demo:cp": "cp src/demo/index.html dist/index.iife.js dist/demo",
-    "demo": "pnpm build && pnpm demo:build && pnpm demo:cp"
+    "demo": "sh scripts/demo.sh"
   },
   "unpkg": "dist/index.iife.js",
   "jsdelivr": "dist/index.iife.js",
