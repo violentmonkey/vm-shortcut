@@ -39,3 +39,30 @@ export const aliases: Record<string, string> = {
   escape: 'esc',
   ' ': 'space',
 };
+
+/** Display symbols for keys known from `event.code`. */
+export const codeSymbols: Record<string, string> = {
+  backquote: '`',
+  minus: '-',
+  equal: '=',
+  bracketleft: '[',
+  bracketright: ']',
+  backslash: '\\',
+  semicolon: ';',
+  quote: "'",
+  comma: ',',
+  period: '.',
+  slash: '/',
+};
+
+/** Display symbols for suffixes of `Numpad*` keys in `event.code`. */
+export const numpadSymbols: Record<string, string> = {
+  enter: 'Enter',
+  equal: '=',
+  multiply: '*',
+  add: '+',
+  subtract: '-',
+  decimal: '.',
+  divide: '/',
+  comma: ',',
+};

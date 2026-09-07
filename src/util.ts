@@ -1,8 +1,10 @@
 import {
   aliases,
+  codeSymbols,
   modifierAliases,
   modifierList,
   modifierSymbols,
+  numpadSymbols,
 } from './constants';
 import { IShortcutCondition, IShortcutKey, IShortcutModifiers } from './types';
 
@@ -74,6 +76,15 @@ export function parseCondition(condition: string): IShortcutCondition[] {
 export function reprKey(key: IShortcutKey) {
   const { modifierState, caseSensitive } = key;
   let { base } = key;
+  // Handle keys written as `event.code`, e.g. `KeyS`, `Digit1`, `Numpad1`.
+  let codeMatch = base.match(/^(?:key|digit)(\w)$/i);
+  if (codeMatch) {
+    base = codeMatch[1].toUpperCase();
+  } else if ((codeMatch = base.match(/^numpad(\w+)$/i))) {
+    base = `Num${numpadSymbols[codeMatch[1].toLowerCase()] || codeMatch[1]}`;
+  } else {
+    base = codeSymbols[base.toLowerCase()] || base;
+  }
   if (!caseSensitive || base.length > 1) {
     base = base[0].toUpperCase() + base.slice(1);
   }

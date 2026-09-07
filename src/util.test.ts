@@ -102,4 +102,13 @@ it('reprShortcut', () => {
   expect(reprShortcut('g', true)).toEqual('g');
   expect(reprShortcut('g g', true)).toEqual('g g');
   expect(reprShortcut('c--', false)).toEqual('^-');
+  expect(reprShortcut('KeyS')).toEqual('S');
+  expect(reprShortcut('keys')).toEqual('S');
+  expect(reprShortcut('Digit1')).toEqual('1');
+  expect(reprShortcut('Numpad1')).toEqual('Num1');
+  expect(reprShortcut('NumpadEnter')).toEqual('NumEnter');
+  expect(reprShortcut('c-NumpadSubtract')).toEqual('^Num-');
+  expect(reprShortcut('c-Semicolon')).toEqual('^;');
+  expect(reprShortcut('c-semicolon')).toEqual('^;');
+  expect(reprShortcut('keyboard')).toEqual('Keyboard');
 });

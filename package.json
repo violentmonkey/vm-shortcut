@@ -29,6 +29,7 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "sideEffects": false,
   "main": "dist/index.iife.js",
   "module": "dist/index.js",
   "files": [
