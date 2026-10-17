@@ -12,16 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v6
-        name: Install pnpm
+      - uses: pnpm/setup@v3
         with:
-          version: 11
-          run_install: false
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '26'
-          cache: 'pnpm'
+          version: 12
+          runtime: node@26
+          cache: true
 
       - name: Build
         run: pnpm i && pnpm demo
